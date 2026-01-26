@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Store</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  color:white;
+  background:#000;
+}
+
+
+
+/* HEADER */
+header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  padding:25px;
+}
+header img{width:220px}
+.texto-header{font-size:24px;font-weight:bold}
+.sub-ciudad{font-size:14px;opacity:.8}
+
+/* MODELOS */
+.stock{text-align:center}
+.modelos{
+  display:flex;
+  gap:15px;
+  overflow-x:auto;
+  padding:10px;
+  align-items:center;
+}
+.modelo{text-align:center;cursor:pointer}
+.modelo img{
+  width:70px;height:70px;
+  object-fit:contain;
+  border-radius:50%;
+  border:2px solid #444;
+  background:white;
+  padding:5px;
+}
+.modelo.activo img{
+  animation:resaltar 1.5s infinite;
+  border-color:#39ff14;
+}
+@keyframes resaltar{
+  0%{box-shadow:0 0 5px #39ff14}
+  50%{box-shadow:0 0 18px #39ff14}
+  100%{box-shadow:0 0 5px #39ff14}
+}
+.modelo span{display:block;font-size:11px;margin-top:5px;font-weight:bold}
+.separador{width:2px;height:70px;background:white;opacity:.3}
+.ver-todos{
+  margin:10px;
+  padding:8px 15px;
+  border-radius:20px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* PRECIOS */
+.precio-ars{
+  color:#fff;        /* BLANCO (no negro) */
+  font-size:18px;
+  font-weight:bold;
+}
+
+.precio-usd{
+  color:#00c853;     /* Verde USD */
+  font-size:14px;
+  font-weight:bold;
+}
+
+/* PRODUCTOS */
+section{padding:15px}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:15px;
+  max-width:600px;
+  margin:auto;
+
+}
+.card{
+  border:1px solid #333;
+  border-radius:18px;
+  padding:15px;
+  background:#0b0b0b;
+}
+.titulo{font-weight:bold;font-size:17px}
+.tag{padding:3px 8px;border-radius:8px;font-size:12px;margin-left:6px}
+.usado-tag{background:#222;color:#ccc}
+.sellado-tag{background:#39ff14;color:black}
+.bateria{
+  margin-top:6px;
+  display:inline-block;
+  background:#000;
+  border:1px solid #39ff14;
+  padding:4px 8px;
+  border-radius:8px;
+  font-size:12px;
+}
+.precio{font-size:18px;font-weight:bold;margin:8px 0}
+.ver-cuotas{
+  background:#222;
+  border:1px solid #555;
+  color:white;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.boton{
+  display:block;
+  margin-top:10px;
+  padding:10px;
+  background:white;
+  color:black;
+  text-align:center;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:bold;
+}
+.sellado{display:none}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-content{
+  background:#111;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+}
+.cuota{
+  background:#39ff14;
+  color:black;
+  padding:6px;
+  border-radius:8px;
+  margin:6px 0;
+}
+
+.detalle {
+  font-size: 13px;
+  color: #aaa;
+  margin: 6px 0 4px 0;
+  background: #111;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.ps5-tag {
+  background: #0055ff;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-left: 6px;
+
+}
+
+.dolar-hoy{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:8px 18px;
+  border-radius:999px;
+  background:#111;
+  border:1px solid #39ff14;
+  color:#39ff14;
+  font-size:15px;
+  font-weight:700;
+  animation: glowDolar 2s infinite;
+}
+
+@keyframes glowDolar{
+  0%{ box-shadow:0 0 4px #39ff14; }
+  50%{ box-shadow:0 0 14px #39ff14; }
+  100%{ box-shadow:0 0 4px #39ff14; }
+}
+
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="https://i.postimg.cc/8cTqnGWB/8c331ec9-9ce8-4e29-8496-263cf1a6c495.jpg">
+  </div>
+</header>
+
+<div class="stock">
+	<div class="dolar-hoy">
+  💵 Dólar hoy: <strong id="valorDolar"></strong>
+</div>
+  <h2>STOCK DISPONIBLE</h2>
+
+  <!-- ICONOS / FILTROS -->
+  <div class="modelos">
+
+    <div class="modelo" onclick="mostrarSellados(this)">
+      <img src="https://i.postimg.cc/PqzbwZHY/i_Phone_Device_List_Smart_Website_1280_x_853_i_Phone_17_Pro_1_c26420e4fa.webp">
+      <span>Sellados</span>
+    </div>
+
+	<div class="separador"></div>
+    <div class="modelo" onclick="filtrarModelo('11',this)">
+      <img src="https://i.postimg.cc/9MFt2M9F/1_org_zoom.webp">
+      <span>iPhone 11</span>
+    </div>
+
+    <div class="separador"></div>
+    <div class="modelo" onclick="filtrarModelo('12',this)">
+      <img src="https://i.postimg.cc/9MFt2M9F/1_org_zoom.webp">
+      <span>iPhone 12</span>
+    </div>
+
+    <div class="separador"></div>
+    <div class="modelo" onclick="filtrarModelo('13',this)">
+      <img src="https://i.postimg.cc/90LZXJJ8/iphone_13_PNG27.png">
+      <span>iPhone 13</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('13-pro',this)">
+      <img src="https://i.postimg.cc/2ynYhx9D/Apple-i-Phone-13-Pro-Graphite-1.webp">
+      <span>iPhone 13 Pro</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('13-pro-max',this)">
+      <img src="https://i.postimg.cc/zvC5QpVm/D-707053-MLA96868171221-102025-C.jpg">
+      <span>iPhone 13 Pro Max</span>
+    </div>
+
+	<div class="modelo" onclick="filtrarModelo('14',this)">
+      <img src="https://i.postimg.cc/tTt7Cthh/0bb0c6a5_603e_4338_8527_1fda8f2df096.png">
+      <span>iPhone 14</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('14-pro-max',this)">
+      <img src="https://i.postimg.cc/hvBRVxpn/fee4af78-110f-467c-86d2-6d6f27ba1afe-8422413b3b9eb231cea3f43d11a5a5c4.webp">
+      <span>iPhone 14 Pro Max</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('15',this)">
+      <img src="https://i.postimg.cc/T1GBKxYF/D-Q-NP-901991-MLA96144091409-102025-O.webp">
+      <span>iPhone 15</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('15-pro-max',this)">
+      <img src="https://i.postimg.cc/XvT106xd/iphone-15-pro-max-blue-titanium.webp">
+      <span>iPhone 15 Pro Max</span>
+    </div>
+
+	<div class="modelo" onclick="filtrarModelo('16',this)">
+      <img src="https://i.postimg.cc/dtHBYKVP/d3e7282f_0020_4e25_ad70_cd833fbb0056.webp">
+      <span>iPhone 16</span>
+    </div>
+
+	<div class="modelo" onclick="filtrarModelo('16-pro',this)">
+      <img src="https://i.postimg.cc/kMj8Vv3Y/07_11_2024_03_11_36_iphone16promax1.png">
+      <span>iPhone 16 pro</span>
+    </div>
+
+    <div class="modelo" onclick="filtrarModelo('16-pro-max',this)">
+      <img src="https://i.postimg.cc/Y2JWKwN5/IMG_9112.png">
+      <span>iPhone 16 Pro Max</span>
+    </div>
+
+    <div class="separador"></div>
+
+  
+
+  </div> <!-- 🔴 CIERRE CORRECTO DE .modelos -->
+
+  <!-- BOTON VER TODOS -->
+  <div style="display:flex; justify-content:center; margin:15px 0;">
+    <button class="ver-todos" onclick="verTodos()">
+      Ver todos
+    </button>
+  </div>
+
+</div>
+<!-- USADOS -->
+<div class="card usado" data-modelo="11" data-usd="250">
+  <div class="titulo">iPhone 11 64GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Negro</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 250</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="11" data-usd="200">
+  <div class="titulo">iPhone 11 64GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Lila</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 200</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="12" data-usd="350">
+  <div class="titulo">iPhone 11 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Negro</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 350</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+ <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+	
+<div class="card usado" data-modelo="13" data-usd="430">
+  <div class="titulo">iPhone 13 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Blanco</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 430</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+
+<div class="card usado" data-modelo="13-pro" data-usd="500">
+  <div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 96%</div>
+<div class="detalle">Color Celeste🔵</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 500</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="13-pro" data-usd="520">
+  <div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Dorado</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 520</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="13-pro-max" data-usd="585">
+  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Blanco</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 585</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="13-pro-max" data-usd="585">
+  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Dorado</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 585</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+ <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="13-pro-max" data-usd="585">
+  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Negro</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 585</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="14" data-usd="450">
+  <div class="titulo">iPhone 14 128GB <span class="tag usado-tag">En Caja</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Lila</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 450</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="14-pro-max" data-usd="690">
+  <div class="titulo">iPhone 14 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Blanco</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 690</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="15" data-usd="590">
+  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Verde</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 590</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="15" data-usd="590">
+  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Celeste</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 590</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="15" data-usd="590">
+  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Rosa</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 590</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="15" data-usd="590">
+  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Negro</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 590</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="15-pro-max" data-usd="880">
+  <div class="titulo">iPhone 15 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Titanium</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 880</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="16" data-usd="800">
+  <div class="titulo">iPhone 16 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Black⚫️</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 800</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="16-pro" data-usd="930">
+  <div class="titulo">iPhone 16 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 85%</div>
+<div class="detalle">Color Titanium</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 930</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+<div class="card usado" data-modelo="16-pro-max" data-usd="1100">
+  <div class="titulo">iPhone 16 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
+  <div class="bateria">🔋 100%</div>
+<div class="detalle">Color Desert</div>
+  <div class="precio-ars"></div>
+<div class="precio-usd">USD 1100</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+
+
+
+<!-- SELLADOS -->
+
+
+<!-- SELLADOS OTROS PRODUCTOS -->
+
+
+
+<!-- PS5 -->
+<div class="card ps5" data-usd="599" data-modelo="ps5">
+  <div class="titulo">PS5 Digital 1TB<span class="tag ps5-tag">Nuevo</span></div>
+  <div class="detalle">Sin lector de discos · 1 control</div>
+  <div class="precio-ars"></div>
+  <div class="precio-usd">USD 599</div>
+  <button class="ver-cuotas" onclick="abrirCuotas(this)">Ver cuotas</button>
+  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+</div>
+
+	
+</div>
+</section>
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+<div class="modal" id="modalWhatsapp">
+  <div class="modal-content">
+    <h3>📲 Elegí un WhatsApp</h3>
+
+    <a class="boton" target="_blank"
+       href="https://wa.me/5493704588507">
+       📞 Ventas 1
+    </a>
+
+    <a class="boton" target="_blank"
+       href="https://wa.me/5493510000000">
+       📞 Ventas 2
+    </a>
+
+    <button class="ver-cuotas" onclick="cerrarWhatsapp()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const usados = document.querySelectorAll(".usado");
+const sellados = document.querySelectorAll(".sellado");
+const ps5 = document.querySelectorAll(".ps5");
+const macbooks = document.querySelectorAll(".macbook");
+const ipad = document.querySelectorAll(".ipad");
+const airpods = document.querySelectorAll(".airpods");
+const cargadores = document.querySelectorAll(".cargadores");
+const applepencil = document.querySelectorAll(".applepencil");
+const applewatch = document.querySelectorAll(".applewatch");
+const airtag = document.querySelectorAll(".airtag");
+const parlantejbl = document.querySelectorAll(".parlantejbl");
+const modelos = document.querySelectorAll(".modelo");
+const VALOR_DOLAR = 1530;
+
+document.getElementById("valorDolar").textContent =
+  `$${VALOR_DOLAR.toLocaleString("es-AR")}`;
+
+/* ================= PRECIOS ================= */
+function actualizarPrecios() {
+  document.querySelectorAll(".card[data-usd]").forEach(card => {
+    const usd = Number(card.dataset.usd);
+    const ars = usd * VALOR_DOLAR;
+
+    const precioARS = card.querySelector(".precio-ars");
+    if (precioARS) {
+      precioARS.textContent = `$${ars.toLocaleString("es-AR")}`;
+    }
+  });
+}
+actualizarPrecios();
+
+/* ================= FILTROS ================= */
+function ocultarTodo(){
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = "none";
+  });
+}
+
+function activar(el){
+  modelos.forEach(m => m.classList.remove("activo"));
+  if(el) el.classList.add("activo");
+}
+
+function verTodos(){
+  activar(null);
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = "block";
+  });
+}
+
+function mostrarSellados(el){
+  activar(el);
+  ocultarTodo();
+  sellados.forEach(i => i.style.display = "block");
+}
+
+function mostrarPS5(el){
+  activar(el);
+  ocultarTodo();
+  ps5.forEach(i => i.style.display = "block");
+}
+function abrirWhatsApp(){
+  document.getElementById("modalWhatsapp").style.display = "flex";
+}
+
+function cerrarWhatsapp(){
+  document.getElementById("modalWhatsapp").style.display = "none";
+}
+
+function mostrarMacbook(el){
+  activar(el);
+  ocultarTodo();
+  macbooks.forEach(i => i.style.display = "block");
+}
+
+function mostrarIpad(el){
+  activar(el);
+  ocultarTodo();
+  ipad.forEach(i => i.style.display = "block");
+}
+
+function mostrarAirPods(el){
+  activar(el);
+  ocultarTodo();
+  airpods.forEach(i => i.style.display = "block");
+}
+
+function mostrarCargadores(el){
+  activar(el);
+  ocultarTodo();
+  cargadores.forEach(i => i.style.display = "block");
+}
+
+function mostrarApplePencil(el){
+  activar(el);
+  ocultarTodo();
+  applepencil.forEach(i => i.style.display = "block");
+}
+
+function mostrarAppleWatch(el){
+  activar(el);
+  ocultarTodo();
+  applewatch.forEach(i => i.style.display = "block");
+}
+
+function mostrarAirTag(el){
+  activar(el);
+  ocultarTodo();
+  airtag.forEach(i => i.style.display = "block");
+}
+
+function mostrarParlanteJBL(el){
+  activar(el);
+  ocultarTodo();
+  parlantejbl.forEach(i => i.style.display = "block");
+}
+function filtrarModelo(m, el){
+  activar(el);
+  ocultarTodo();
+  usados.forEach(i => {
+    i.style.display =
+      i.dataset.modelo.toLowerCase() === m.toLowerCase()
+      ? "block"
+      : "none";
+  });
+}
+
+/* ================= MODAL CUOTAS ================= */
+function abrirCuotas(btn){
+  const card = btn.closest(".card");
+  if(!card) return;
+
+  let precioARS = 0;
+
+  if(card.dataset.usd){
+    precioARS = Number(card.dataset.usd) * VALOR_DOLAR;
+  }
+
+  if(!precioARS) return alert("Precio inválido");
+
+  const cuota3 = Math.round(precioARS * 1.25 / 3);
+  const cuota6 = Math.round(precioARS * 1.35 / 6);
+
+  const modal = document.getElementById("modal");
+  const contenido = document.getElementById("modalContent");
+
+  contenido.innerHTML = `
+    <h3>Cuotas</h3>
+    <p>3x $${cuota3.toLocaleString("es-AR")}</p>
+    <p>6x $${cuota6.toLocaleString("es-AR")}</p>
+    <button onclick="cerrar()">Cerrar</button>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function cerrar(){
+  document.getElementById("modal").style.display = "none";
+}
+
+/* ================= INIT ================= */
+verTodos();
+</script>
+
+</body>
+</html>
+
