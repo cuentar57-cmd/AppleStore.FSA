@@ -79,6 +79,44 @@ header img{width:220px}
   font-size:14px;
   font-weight:bold;
 }
+header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  padding:25px;
+  position: relative;
+}
+
+.logo-header img{
+  width:180px;
+  animation: logoAnim 2s infinite alternate;
+}
+
+.header-iphone img{
+  width:100px;
+  animation: iphoneAnim 1.5s infinite alternate;
+}
+
+.header-iphone.left img{
+  transform-origin: right center;
+}
+
+.header-iphone.right img{
+  transform-origin: left center;
+}
+
+@keyframes logoAnim{
+  0%{ transform: scale(1) rotate(0deg);}
+  50%{ transform: scale(1.1) rotate(-5deg);}
+  100%{ transform: scale(1) rotate(0deg);}
+}
+
+@keyframes iphoneAnim{
+  0%{ transform: translateY(0) rotate(0deg);}
+  50%{ transform: translateY(-10px) rotate(5deg);}
+  100%{ transform: translateY(0) rotate(0deg);}
+}
 header img {
   width: 220px;
   animation: rebotar 2s infinite;
@@ -212,8 +250,18 @@ section{padding:15px}
 
 <body>
 
+<!-- HEADER ANIMADO -->
 <header>
-  <img src="https://i.postimg.cc/9Fzwj5gc/c6f18b0e-fdac-46d3-9c09-1d910308cf31.jpg">
+  <div class="header-iphone left">
+    <img src="https://i.postimg.cc/8cTqnGWB/8c331ec9-9ce8-4e29-8496-263cf1a6c495.jpg" alt="iPhone Izquierdo">
+  </div>
+
+  <div class="logo-header">
+    <img src="https://i.postimg.cc/9Fzwj5gc/c6f18b0e-fdac-46d3-9c09-1d910308cf31.jpg" alt="Logo">
+  </div>
+
+  <div class="header-iphone right">
+    <img src="https://i.postimg.cc/8cTqnGWB/8c331ec9-9ce8-4e29-8496-263cf1a6c495.jpg" alt="iPhone Derecho">
   </div>
 </header>
 
@@ -241,7 +289,7 @@ section{padding:15px}
     <div class="separador"></div>
 
     <div class="modelo" onclick="filtrarModelo('11',this)">
-      <img src="https://i.postimg.cc/9MFt2M9F/1_org_zoom.webp">
+      <img src="https://i.postimg.cc/YCzJMVs6/IMG-1356.webp">
       <span>iPhone 11</span>
     </div>
 
