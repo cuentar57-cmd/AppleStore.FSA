@@ -304,7 +304,18 @@ section{padding:15px}
   100% { box-shadow: 0 0 6px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14; }
 }
 
+.dolar-container {
+  display: flex;
+  justify-content: center; /* Centra todo horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  gap: 15px;               /* Espacio entre dólar y botón */
+  margin-bottom: 12px;
+  position: relative;
+}
 
+.menu-btn-container {
+  position: relative;
+}
 
 
 
@@ -329,19 +340,19 @@ section{padding:15px}
   </div>
 </header>
 
-<div class="stock" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-  <!-- Dólar -->
-  <div class="dolar-hoy">
-    💵 Dólar hoy: <strong id="valorDolar"></strong>
-  </div>
+<div class="stock">
+  <div class="dolar-container">
+    <div class="dolar-hoy">
+      💵 Dólar hoy: <strong id="valorDolar"></strong>
+    </div>
 
-  <!-- Botón menú al lado del dólar -->
-  <div class="menu-btn-container" style="position:relative;">
-    <button class="menu-btn">☰</button>
-    <div class="menu-dropdown">
-      <a href="https://www.instagram.com/applestore.fsa?igsh=cDNzZjhpODl6aHhk" target="_blank">Instagram</a>
-      <a href="https://maps.app.goo.gl/8kT9KDwrkvw4fjAa7?g_st=ic" target="_blank">Ubicación</a>
-      <span>✅ Se acepta Plan Canje</span>
+    <div class="menu-btn-container">
+      <button class="menu-btn">☰</button>
+      <div class="menu-dropdown">
+        <a href="https://www.instagram.com/applestore.fsa?igsh=cDNzZjhpODl6aHhk" target="_blank">Instagram</a>
+        <a href="https://maps.app.goo.gl/8kT9KDwrkvw4fjAa7?g_st=ic" target="_blank">Ubicación</a>
+        <span>✅ Se acepta Plan Canje</span>
+      </div>
     </div>
   </div>
 </div>
