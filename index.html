@@ -94,7 +94,7 @@ header{
 }
 
 .header-iphone img{
-  width:160px;
+  width:140px;
   animation: iphoneAnim 1.5s infinite alternate;
 }
 
@@ -251,13 +251,14 @@ section{padding:15px}
   color:#39ff14;
   font-size:15px;
   font-weight:700;
-  animation: glowDolar 2s infinite;
+  animation: glowDolar 1.5s infinite alternate;
+  box-shadow: 0 0 6px #39ff14;
 }
 
 @keyframes glowDolar{
-  0%{ box-shadow:0 0 4px #39ff14; }
-  50%{ box-shadow:0 0 14px #39ff14; }
-  100%{ box-shadow:0 0 4px #39ff14; }
+  0% { box-shadow: 0 0 6px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14; }
+  50% { box-shadow: 0 0 12px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14; }
+  100% { box-shadow: 0 0 6px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14; }
 }
 
 
