@@ -222,6 +222,29 @@ section{padding:15px}
   }
 } /* <<== agregá esta llave de cierre */
 
+.stock-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centra todo horizontalmente */
+  margin-bottom: 20px;
+}
+
+.stock {
+  display: flex;
+  justify-content: center; /* centra dólar + botón */
+  align-items: center;
+  gap: 20px; /* espacio entre dólar y botón */
+  width: 100%;
+  max-width: 600px; /* opcional: no se expanda demasiado en pantallas grandes */
+}
+
+h2 {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
 /* Botón menú y desplegable */
 .menu-btn {
   background:#111;
@@ -340,8 +363,8 @@ section{padding:15px}
   </div>
 </header>
 
-<div class="stock">
-  <div class="dolar-container">
+<div class="stock-wrapper">
+  <div class="stock">
     <div class="dolar-hoy">
       💵 Dólar hoy: <strong id="valorDolar"></strong>
     </div>
@@ -355,8 +378,9 @@ section{padding:15px}
       </div>
     </div>
   </div>
-</div>
+
   <h2>STOCK DISPONIBLE</h2>
+</div>
 
   <!-- ICONOS / FILTROS -->
  
