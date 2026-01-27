@@ -94,7 +94,7 @@ header{
 }
 
 .header-iphone img{
-  width:100px;
+  width:160px;
   animation: iphoneAnim 1.5s infinite alternate;
 }
 
@@ -200,6 +200,26 @@ section{padding:15px}
   border-radius:8px;
   margin:6px 0;
 }
+.card {
+  border: 1px solid #333;
+  border-radius: 18px;
+  padding: 15px;
+  background: #0b0b0b;
+  /* Nuevo efecto */
+  box-shadow: 0 0 5px rgba(255,255,255,0.2);
+  animation: cardGlow 2s infinite alternate;
+}
+
+@keyframes cardGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255,255,255,0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+  }
 
 .detalle {
   font-size: 13px;
@@ -536,7 +556,7 @@ section{padding:15px}
 
 <div class="card usado" data-modelo="16-pro" data-usd="930">
   <div class="titulo">iPhone 16 Pro 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 85%</div>
+  <div class="bateria">🔋 97%</div>
 <div class="detalle">Color Titanium</div>
   <div class="precio-ars"></div>
 <div class="precio-usd">USD 930</div>
