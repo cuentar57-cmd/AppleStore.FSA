@@ -606,6 +606,7 @@ section{padding:15px}
 <script>
 const usados = document.querySelectorAll(".usado");
 const sellados = document.querySelectorAll(".sellado");
+const zonagamer = document.querySelectorAll(".zonagamer");
 const ps5 = document.querySelectorAll(".ps5");
 const macbooks = document.querySelectorAll(".macbook");
 const ipad = document.querySelectorAll(".ipad");
@@ -635,6 +636,11 @@ function actualizarPrecios() {
 }
 actualizarPrecios();
 
+function mostrarZonaGamer(el){
+  activar(el);
+  ocultarTodo();
+  document.querySelectorAll('.card[data-modelo="zonagamer"]').forEach(i => i.style.display = "block");
+}
 /* ================= FILTROS ================= */
 function ocultarTodo(){
   document.querySelectorAll(".card").forEach(card => {
