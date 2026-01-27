@@ -79,7 +79,15 @@ header img{width:220px}
   font-size:14px;
   font-weight:bold;
 }
+header img {
+  width: 220px;
+  animation: rebotar 2s infinite;
+}
 
+@keyframes rebotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
 /* PRODUCTOS */
 section{padding:15px}
 .grid{
@@ -205,7 +213,7 @@ section{padding:15px}
 <body>
 
 <header>
-  <img src="https://i.postimg.cc/8cTqnGWB/8c331ec9-9ce8-4e29-8496-263cf1a6c495.jpg">
+  <img src="https://i.postimg.cc/9Fzwj5gc/c6f18b0e-fdac-46d3-9c09-1d910308cf31.jpg">
   </div>
 </header>
 
