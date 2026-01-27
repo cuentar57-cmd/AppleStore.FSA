@@ -1003,8 +1003,8 @@ h2 {
 const usados = document.querySelectorAll(".usado");
 const sellados = document.querySelectorAll(".sellado");
 const zonagamer = document.querySelectorAll('[data-modelo="zonagamer"]');
-const ps5 = document.querySelectorAll(".smart");
 const ps5 = document.querySelectorAll(".ps5");
+const smart = document.querySelectorAll(".smart");
 const macbooks = document.querySelectorAll(".macbook");
 const ipad = document.querySelectorAll(".ipad");
 const airpods = document.querySelectorAll(".airpods");
@@ -1014,26 +1014,22 @@ const applewatch = document.querySelectorAll(".applewatch");
 const airtag = document.querySelectorAll(".airtag");
 const parlantejbl = document.querySelectorAll(".parlantejbl");
 const modelos = document.querySelectorAll(".modelo");
-const VALOR_DOLAR = 1530;
 
-document.getElementById("valorDolar").textContent =
-  `$${VALOR_DOLAR.toLocaleString("es-AR")}`;
+const VALOR_DOLAR = 1530;
+document.getElementById("valorDolar").textContent = `$${VALOR_DOLAR.toLocaleString("es-AR")}`;
 
 /* ================= PRECIOS ================= */
 function actualizarPrecios() {
   document.querySelectorAll(".card[data-usd]").forEach(card => {
     const usd = Number(card.dataset.usd);
     const ars = usd * VALOR_DOLAR;
-
     const precioARS = card.querySelector(".precio-ars");
-    if (precioARS) {
-      precioARS.textContent = `$${ars.toLocaleString("es-AR")}`;
-    }
+    if(precioARS) precioARS.textContent = `$${ars.toLocaleString("es-AR")}`;
   });
 }
 actualizarPrecios();
 
-// Toggle menú
+/* ================= MENÚ ================= */
 const menuBtnContainer = document.querySelector(".menu-btn-container");
 const menuBtn = document.querySelector(".menu-btn");
 
@@ -1041,134 +1037,52 @@ menuBtn.addEventListener("click", () => {
   menuBtnContainer.classList.toggle("active");
 });
 
-// Cerrar menú al hacer clic fuera
-document.addEventListener("click", (e) => {
-  if (!menuBtnContainer.contains(e.target)) {
-    menuBtnContainer.classList.remove("active");
-  }
+document.addEventListener("click", e => {
+  if(!menuBtnContainer.contains(e.target)) menuBtnContainer.classList.remove("active");
 });
 
-function mostrarZonaGamer(el){
-  activar(el);
-  ocultarTodo();
-  document.querySelectorAll('.card[data-modelo="zonagamer"]').forEach(i => i.style.display = "block");
-}
-function mostrarSmart(el){
-  activar(el);
-  ocultarTodo();
-  document.querySelectorAll('.card[data-modelo="zonagamer"]').forEach(i => i.style.display = "block");
-}
 /* ================= FILTROS ================= */
-function ocultarTodo(){
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = "none";
-  });
+function ocultarTodo() {
+  document.querySelectorAll(".card").forEach(card => card.style.display = "none");
 }
 
-function activar(el){
+function activar(el) {
   modelos.forEach(m => m.classList.remove("activo"));
   if(el) el.classList.add("activo");
 }
 
-function verTodos(){
+function verTodos() {
   activar(null);
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = "block";
-  });
+  document.querySelectorAll(".card").forEach(card => card.style.display = "block");
 }
 
-function mostrarSellados(el){
-  activar(el);
-  ocultarTodo();
-  sellados.forEach(i => i.style.display = "block");
-}
+function mostrarSellados(el) { activar(el); ocultarTodo(); sellados.forEach(i => i.style.display = "block"); }
+function mostrarPS5(el) { activar(el); ocultarTodo(); ps5.forEach(i => i.style.display = "block"); }
+function mostrarSmart(el) { activar(el); ocultarTodo(); smart.forEach(i => i.style.display = "block"); }
+function mostrarZonaGamer(el) { activar(el); ocultarTodo(); zonagamer.forEach(i => i.style.display = "block"); }
+function mostrarMacbook(el) { activar(el); ocultarTodo(); macbooks.forEach(i => i.style.display = "block"); }
+function mostrarIpad(el) { activar(el); ocultarTodo(); ipad.forEach(i => i.style.display = "block"); }
+function mostrarAirPods(el) { activar(el); ocultarTodo(); airpods.forEach(i => i.style.display = "block"); }
+function mostrarCargadores(el) { activar(el); ocultarTodo(); cargadores.forEach(i => i.style.display = "block"); }
+function mostrarApplePencil(el) { activar(el); ocultarTodo(); applepencil.forEach(i => i.style.display = "block"); }
+function mostrarAppleWatch(el) { activar(el); ocultarTodo(); applewatch.forEach(i => i.style.display = "block"); }
+function mostrarAirTag(el) { activar(el); ocultarTodo(); airtag.forEach(i => i.style.display = "block"); }
+function mostrarParlanteJBL(el) { activar(el); ocultarTodo(); parlantejbl.forEach(i => i.style.display = "block"); }
 
-function mostrarPS5(el){
-  activar(el);
-  ocultarTodo();
-  ps5.forEach(i => i.style.display = "block");
-}
-function abrirWhatsApp(){
-  document.getElementById("modalWhatsapp").style.display = "flex";
-}
-
-function cerrarWhatsapp(){
-  document.getElementById("modalWhatsapp").style.display = "none";
-}
-function mostrarZonaGamer(el){
-  activar(el);
-  ocultarTodo();
-  zonagamer.forEach(i => i.style.display = "block");
-}
-function mostrarMacbook(el){
-  activar(el);
-  ocultarTodo();
-  macbooks.forEach(i => i.style.display = "block");
-}
-
-function mostrarIpad(el){
-  activar(el);
-  ocultarTodo();
-  ipad.forEach(i => i.style.display = "block");
-}
-
-function mostrarAirPods(el){
-  activar(el);
-  ocultarTodo();
-  airpods.forEach(i => i.style.display = "block");
-}
-
-function mostrarCargadores(el){
-  activar(el);
-  ocultarTodo();
-  cargadores.forEach(i => i.style.display = "block");
-}
-
-function mostrarApplePencil(el){
-  activar(el);
-  ocultarTodo();
-  applepencil.forEach(i => i.style.display = "block");
-}
-
-function mostrarAppleWatch(el){
-  activar(el);
-  ocultarTodo();
-  applewatch.forEach(i => i.style.display = "block");
-}
-
-function mostrarAirTag(el){
-  activar(el);
-  ocultarTodo();
-  airtag.forEach(i => i.style.display = "block");
-}
-
-function mostrarParlanteJBL(el){
-  activar(el);
-  ocultarTodo();
-  parlantejbl.forEach(i => i.style.display = "block");
-}
-function filtrarModelo(m, el){
+function filtrarModelo(m, el) {
   activar(el);
   ocultarTodo();
   usados.forEach(i => {
-    i.style.display =
-      i.dataset.modelo.toLowerCase() === m.toLowerCase()
-      ? "block"
-      : "none";
+    i.style.display = i.dataset.modelo.toLowerCase() === m.toLowerCase() ? "block" : "none";
   });
 }
 
 /* ================= MODAL CUOTAS ================= */
-function abrirCuotas(btn){
+function abrirCuotas(btn) {
   const card = btn.closest(".card");
   if(!card) return;
 
-  let precioARS = 0;
-
-  if(card.dataset.usd){
-    precioARS = Number(card.dataset.usd) * VALOR_DOLAR;
-  }
-
+  let precioARS = card.dataset.usd ? Number(card.dataset.usd) * VALOR_DOLAR : 0;
   if(!precioARS) return alert("Precio inválido");
 
   const cuota3 = Math.round(precioARS * 1.25 / 3);
@@ -1183,18 +1097,26 @@ function abrirCuotas(btn){
     <p>6x $${cuota6.toLocaleString("es-AR")}</p>
     <button onclick="cerrar()">Cerrar</button>
   `;
-
   modal.style.display = "flex";
 }
 
-function cerrar(){
+function cerrar() {
   document.getElementById("modal").style.display = "none";
+}
+
+/* ================= MODAL WHATSAPP ================= */
+function abrirWhatsApp() {
+  document.getElementById("modalWhatsapp").style.display = "flex";
+}
+
+function cerrarWhatsapp() {
+  document.getElementById("modalWhatsapp").style.display = "none";
 }
 
 /* ================= INIT ================= */
 verTodos();
 </script>
-
+	
 </body>
 </html>
 
