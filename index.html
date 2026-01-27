@@ -222,6 +222,48 @@ section{padding:15px}
   }
 } /* <<== agregá esta llave de cierre */
 
+/* Botón menú y desplegable */
+.menu-btn {
+  background:#111;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.menu-dropdown {
+  display:none;
+  position:absolute;
+  top:110%;
+  right:0;
+  background:#111;
+  border:1px solid #39ff14;
+  border-radius:8px;
+  padding:10px;
+  flex-direction:column;
+  gap:8px;
+  min-width:160px;
+  z-index:1000;
+}
+
+.menu-dropdown a,
+.menu-dropdown span {
+  color:white;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.menu-dropdown a:hover {
+  color:#39ff14;
+}
+
+/* Mostrar menú al hacer clic */
+.menu-btn-container.active .menu-dropdown {
+  display:flex;
+  flex-direction:column;
+}
 .detalle {
   font-size: 13px;
   color: #aaa;
@@ -287,9 +329,21 @@ section{padding:15px}
   </div>
 </header>
 
-<div class="stock">
-	<div class="dolar-hoy">
-  💵 Dólar hoy: <strong id="valorDolar"></strong>
+<div class="stock" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+  <!-- Dólar -->
+  <div class="dolar-hoy">
+    💵 Dólar hoy: <strong id="valorDolar"></strong>
+  </div>
+
+  <!-- Botón menú al lado del dólar -->
+  <div class="menu-btn-container" style="position:relative;">
+    <button class="menu-btn">☰</button>
+    <div class="menu-dropdown">
+      <a href="https://www.instagram.com/applestore.fsa?igsh=cDNzZjhpODl6aHhk" target="_blank">Instagram</a>
+      <a href="https://maps.app.goo.gl/8kT9KDwrkvw4fjAa7?g_st=ic" target="_blank">Ubicación</a>
+      <span>✅ Se acepta Plan Canje</span>
+    </div>
+  </div>
 </div>
   <h2>STOCK DISPONIBLE</h2>
 
@@ -713,6 +767,21 @@ function actualizarPrecios() {
   });
 }
 actualizarPrecios();
+
+// Toggle menú
+const menuBtnContainer = document.querySelector(".menu-btn-container");
+const menuBtn = document.querySelector(".menu-btn");
+
+menuBtn.addEventListener("click", () => {
+  menuBtnContainer.classList.toggle("active");
+});
+
+// Cerrar menú al hacer clic fuera
+document.addEventListener("click", (e) => {
+  if (!menuBtnContainer.contains(e.target)) {
+    menuBtnContainer.classList.remove("active");
+  }
+});
 
 function mostrarZonaGamer(el){
   activar(el);
