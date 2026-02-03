@@ -17,7 +17,7 @@ body{
 
 
 
-/* HEADER */
+
 header{
   display:flex;
   align-items:center;
@@ -67,9 +67,9 @@ header img{width:220px}
   cursor:pointer;
 }
 
-/* PRECIOS */
+
 .precio-ars{
-  color:#fff;        /* BLANCO (no negro) */
+  color:#fff;        
   font-size:18px;
   font-weight:bold;
 }
@@ -205,7 +205,7 @@ section{padding:15px}
   border-radius: 18px;
   padding: 15px;
   background: #0b0b0b;
-  /* Nuevo efecto */
+  
   box-shadow: 0 0 5px rgba(255,255,255,0.2);
   animation: cardGlow 2s infinite alternate;
 }
@@ -220,22 +220,22 @@ section{padding:15px}
   100% {
     box-shadow: 0 0 5px rgba(255,255,255,0.2);
   }
-} /* <<== agregá esta llave de cierre */
+} 
 
 .stock-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center; /* centra todo horizontalmente */
+  align-items: center; 
   margin-bottom: 20px;
 }
 
 .stock {
   display: flex;
-  justify-content: center; /* centra dólar + botón */
+  justify-content: center; 
   align-items: center;
-  gap: 20px; /* espacio entre dólar y botón */
+  gap: 20px; 
   width: 100%;
-  max-width: 600px; /* opcional: no se expanda demasiado en pantallas grandes */
+  max-width: 600px; 
 }
 
 h2 {
@@ -245,7 +245,7 @@ h2 {
   text-align: center;
   color: white;
 }
-/* Botón menú y desplegable */
+
 .menu-btn {
   background:#111;
   color:white;
@@ -329,9 +329,9 @@ h2 {
 
 .dolar-container {
   display: flex;
-  justify-content: center; /* Centra todo horizontalmente */
-  align-items: center;     /* Centra verticalmente */
-  gap: 15px;               /* Espacio entre dólar y botón */
+  justify-content: center; 
+  align-items: center;     
+  gap: 15px;               
   margin-bottom: 12px;
   position: relative;
 }
@@ -348,7 +348,7 @@ h2 {
 
 <body>
 
-<!-- HEADER ANIMADO -->
+
 <header>
   <div class="header-iphone left">
     <img src="https://i.postimg.cc/fyHJGBhW/IMG-1360.png" alt="iPhone Izquierdo">
@@ -382,7 +382,7 @@ h2 {
   <h2>STOCK DISPONIBLE</h2>
 </div>
 
-  <!-- ICONOS / FILTROS -->
+
  
   <div class="modelos">
     <div class="modelo" onclick="mostrarSellados(this)">
@@ -486,9 +486,9 @@ h2 {
       <img src="https://i.postimg.cc/Y2JWKwN5/IMG_9112.png">
       <span>iPhone 16 Pro Max</span>
     </div>
-  </div> <!-- 🔹 fin de .modelos -->
+  </div> 
 
-  <!-- BOTON VER TODOS -->
+
   <div style="display:flex; justify-content:center; margin:15px 0;">
     <button class="ver-todos" onclick="verTodos()">
       Ver todos
@@ -760,10 +760,7 @@ h2 {
   <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
 </div>
 
-<!-- ZONA GAMER -->
 
-<!-- SELLADOS -->
-<!-- SELLADOS -->
 <div class="card sellado" data-modelo="11" data-usd="450">
   <div class="titulo">iPhone 11 64GB <span class="tag sellado-tag">Sellado</span></div>
   <div class="bateria">🔋 100%</div>
@@ -836,8 +833,6 @@ h2 {
   <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
 </div>
 
-<!-- SELLADOS OTROS PRODUCTOS -->
-<!-- SMART TV -->
 <div class="card smart" data-modelo="smart" data-usd="150">
   <div class="titulo">Smart TV Luo 32” <span class="tag Nuevo-tag">Nuevo</span></div>
   <div class="precio-ars"></div>
@@ -965,7 +960,6 @@ h2 {
 </div>
 
 
-<!-- PS5 -->
 
 
 	
@@ -1012,7 +1006,7 @@ const modelos = document.querySelectorAll(".modelo");
 const VALOR_DOLAR = 1480;
 document.getElementById("valorDolar").textContent = `$${VALOR_DOLAR.toLocaleString("es-AR")}`;
 
-/* ================= PRECIOS ================= */
+
 function actualizarPrecios() {
   document.querySelectorAll(".card[data-usd]").forEach(card => {
     const usd = Number(card.dataset.usd);
@@ -1023,7 +1017,7 @@ function actualizarPrecios() {
 }
 actualizarPrecios();
 
-/* ================= MENÚ ================= */
+
 const menuBtnContainer = document.querySelector(".menu-btn-container");
 const menuBtn = document.querySelector(".menu-btn");
 
@@ -1035,7 +1029,7 @@ document.addEventListener("click", e => {
   if(!menuBtnContainer.contains(e.target)) menuBtnContainer.classList.remove("active");
 });
 
-/* ================= FILTROS ================= */
+
 function ocultarTodo() {
   document.querySelectorAll(".card").forEach(card => card.style.display = "none");
 }
@@ -1071,7 +1065,7 @@ function filtrarModelo(m, el) {
   });
 }
 
-/* ================= MODAL CUOTAS ================= */
+
 function abrirCuotas(btn) {
   const card = btn.closest(".card");
   if(!card) return;
@@ -1098,7 +1092,7 @@ function cerrar() {
   document.getElementById("modal").style.display = "none";
 }
 
-/* ================= MODAL WHATSAPP ================= */
+
 function abrirWhatsApp() {
   document.getElementById("modalWhatsapp").style.display = "flex";
 }
@@ -1107,7 +1101,7 @@ function cerrarWhatsapp() {
   document.getElementById("modalWhatsapp").style.display = "none";
 }
 
-/* ================= INIT ================= */
+
 verTodos();
 </script>
 	
