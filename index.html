@@ -340,7 +340,39 @@ h2 {
   position: relative;
 }
 
+	.iphone-img{
+  width:100%;
+  max-width:180px;
+  display:block;
+  margin:10px auto;
+  transition:0.3s;
+}
 
+.colores{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:8px 0;
+}
+
+.color{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:2px solid #444;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.color:hover{
+  transform:scale(1.2);
+  border-color:white;
+}
+
+.iphone-img:hover{
+transform:scale(1.05);
+transition:0.3s;
+}	
 
 
 </style>
@@ -403,20 +435,6 @@ h2 {
   <img src="https://i.postimg.cc/CMQDJ154/IMG-1453.jpg">
   <span>Smart</span>
 </div>
-    <div class="separador"></div>
-
-    <div class="modelo" onclick="filtrarModelo('11',this)">
-      <img src="https://i.postimg.cc/YCzJMVs6/IMG-1356.webp">
-      <span>iPhone 11</span>
-    </div>
-
-    <div class="separador"></div>
-
-    <div class="modelo" onclick="filtrarModelo('12',this)">
-      <img src="https://i.postimg.cc/9MFt2M9F/1_org_zoom.webp">
-      <span>iPhone 12</span>
-    </div>
-
     <div class="separador"></div>
 
     <div class="modelo" onclick="filtrarModelo('13',this)">
@@ -497,178 +515,412 @@ h2 {
 </div>
 </div>
 <!-- USADOS -->
-<div class="card usado" data-modelo="11" data-usd="250">
-  <div class="titulo">iPhone 11 64GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Negro</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 250</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
 
-<div class="card usado" data-modelo="11" data-usd="200">
-  <div class="titulo">iPhone 11 64GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Lila</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 200</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
-
-<div class="card usado" data-modelo="12" data-usd="350">
-  <div class="titulo">iPhone 12 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Negro</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 350</div>
- <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
-	
 <div class="card usado" data-modelo="13" data-usd="430">
-  <div class="titulo">iPhone 13 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Blanco</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone13img" class="iphone-img"
+src="https://i.postimg.cc/L6yKJtYF/iphone13-negro.png">
+
+<div class="titulo">iPhone 13 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#1c1c1c"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/L6yKJtYF/iphone13-negro.png')"></div>
+
+<div class="color" style="background:#f5f5f0"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/zvLhH9cQ/iphone13-blanco.png')"></div>
+
+<div class="color" style="background:#3a6ea5"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/52b2gT6C/iphone13-azul.png')"></div>
+
+<div class="color" style="background:#ffc0cb"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/7YdG1jKp/iphone13-rosa.png')"></div>
+
+<div class="color" style="background:#ff0000"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/QC5R3L9s/iphone13-rojo.png')"></div>
+
+<div class="color" style="background:#3cb371"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/8z5cJ0f5/iphone13-verde.png')"></div>
+
+<div class="color" style="background:#2e8b57"
+onclick="cambiarColor('iphone13img','https://i.postimg.cc/9F1VJ3Jh/iphone13-verde-alpine.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 430</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 
 <div class="card usado" data-modelo="13-pro" data-usd="500">
-  <div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 96%</div>
-<div class="detalle">Color Celeste🔵</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone13proimg" class="iphone-img"
+src="https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png">
+
+<div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 96%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#2f2f2f"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/zvwYHqLQ/iphone13pro-graphite.png')"></div>
+
+<div class="color" style="background:#e8e8e8"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/k4jKJ1Y2/iphone13pro-silver.png')"></div>
+
+<div class="color" style="background:#d4af37"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/m2wG9W2X/iphone13pro-gold.png')"></div>
+
+<div class="color" style="background:#7fb3ff"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png')"></div>
+
+<div class="color" style="background:#355e3b"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/QtQ1v4rb/iphone13pro-green.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 500</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
-<div class="card usado" data-modelo="13-pro" data-usd="520">
-  <div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Dorado</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 520</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+<div class="card usado" data-modelo="13-pro" data-usd="500">
+
+<img id="iphone13proimg" class="iphone-img"
+src="https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png">
+
+<div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 96%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#2f2f2f"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/zvwYHqLQ/iphone13pro-graphite.png')"></div>
+
+<div class="color" style="background:#e8e8e8"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/k4jKJ1Y2/iphone13pro-silver.png')"></div>
+
+<div class="color" style="background:#d4af37"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/m2wG9W2X/iphone13pro-gold.png')"></div>
+
+<div class="color" style="background:#7fb3ff"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png')"></div>
+
+<div class="color" style="background:#355e3b"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/QtQ1v4rb/iphone13pro-green.png')"></div>
+
 </div>
 
+<div class="precio-ars"></div>
+<div class="precio-usd">USD 500</div>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+</div>
+
+<div class="card usado" data-modelo="13-pro" data-usd="500">
+
+<img id="iphone13proimg" class="iphone-img"
+src="https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png">
+
+<div class="titulo">iPhone 13 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 96%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#2f2f2f"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/zvwYHqLQ/iphone13pro-graphite.png')"></div>
+
+<div class="color" style="background:#e8e8e8"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/k4jKJ1Y2/iphone13pro-silver.png')"></div>
+
+<div class="color" style="background:#d4af37"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/m2wG9W2X/iphone13pro-gold.png')"></div>
+
+<div class="color" style="background:#7fb3ff"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/3R6yB3v1/iphone13pro-blue.png')"></div>
+
+<div class="color" style="background:#355e3b"
+onclick="cambiarColor('iphone13proimg','https://i.postimg.cc/QtQ1v4rb/iphone13pro-green.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
+<div class="precio-usd">USD 500</div>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+</div>
+	
 <div class="card usado" data-modelo="13-pro-max" data-usd="585">
-  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Blanco</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 585</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<img id="iphone13promaximg" class="iphone-img"
+src="https://i.postimg.cc/x8kQ9Zy8/iphone13promax-blue.png">
+
+<div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#2f2f2f"
+onclick="cambiarColor('iphone13promaximg','https://i.postimg.cc/0N2b9s1h/iphone13promax-graphite.png')"></div>
+
+<div class="color" style="background:#e8e8e8"
+onclick="cambiarColor('iphone13promaximg','https://i.postimg.cc/Y2b0qKf1/iphone13promax-silver.png')"></div>
+
+<div class="color" style="background:#d4af37"
+onclick="cambiarColor('iphone13promaximg','https://i.postimg.cc/02H7FJ4n/iphone13promax-gold.png')"></div>
+
+<div class="color" style="background:#7fb3ff"
+onclick="cambiarColor('iphone13promaximg','https://i.postimg.cc/x8kQ9Zy8/iphone13promax-blue.png')"></div>
+
+<div class="color" style="background:#355e3b"
+onclick="cambiarColor('iphone13promaximg','https://i.postimg.cc/Ls6Xh6X6/iphone13promax-green.png')"></div>
+
 </div>
 
-<div class="card usado" data-modelo="13-pro-max" data-usd="585">
-  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Dorado</div>
-  <div class="precio-ars"></div>
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 585</div>
- <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
-<div class="card usado" data-modelo="13-pro-max" data-usd="585">
-  <div class="titulo">iPhone 13 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Negro</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 585</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
 
 <div class="card usado" data-modelo="14" data-usd="450">
-  <div class="titulo">iPhone 14 128GB <span class="tag usado-tag">En Caja</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Lila</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone14img" class="iphone-img"
+src="https://i.postimg.cc/7L9CwYcP/iphone14-purple.png">
+
+<div class="titulo">iPhone 14 128GB <span class="tag usado-tag">En Caja</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#000000"
+onclick="cambiarColor('iphone14img','https://i.postimg.cc/fLXY0QKY/iphone14-midnight.png')"></div>
+
+<div class="color" style="background:#f5f5f5"
+onclick="cambiarColor('iphone14img','https://i.postimg.cc/2S2t3pTw/iphone14-starlight.png')"></div>
+
+<div class="color" style="background:#7db9ff"
+onclick="cambiarColor('iphone14img','https://i.postimg.cc/T1Qx0j4T/iphone14-blue.png')"></div>
+
+<div class="color" style="background:#cfa3ff"
+onclick="cambiarColor('iphone14img','https://i.postimg.cc/7L9CwYcP/iphone14-purple.png')"></div>
+
+<div class="color" style="background:#ff3b30"
+onclick="cambiarColor('iphone14img','https://i.postimg.cc/ZK5jPz1r/iphone14-red.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 450</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 <div class="card usado" data-modelo="14-pro-max" data-usd="690">
-  <div class="titulo">iPhone 14 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Blanco</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone14promaximg" class="iphone-img"
+src="https://i.postimg.cc/pd7QzvMb/iphone14promax-silver.png">
+
+<div class="titulo">iPhone 14 Pro Max 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#000000"
+onclick="cambiarColor('iphone14promaximg','https://i.postimg.cc/1RZ3qHjV/iphone14promax-spaceblack.png')"></div>
+
+<div class="color" style="background:#f5f5f5"
+onclick="cambiarColor('iphone14promaximg','https://i.postimg.cc/pd7QzvMb/iphone14promax-silver.png')"></div>
+
+<div class="color" style="background:#ffd700"
+onclick="cambiarColor('iphone14promaximg','https://i.postimg.cc/3R3L1wB1/iphone14promax-gold.png')"></div>
+
+<div class="color" style="background:#6a0dad"
+onclick="cambiarColor('iphone14promaximg','https://i.postimg.cc/4yY6vZpP/iphone14promax-purple.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 690</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 <div class="card usado" data-modelo="15" data-usd="590">
-  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Verde</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 590</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<img id="iphone15img" class="iphone-img"
+src="https://i.postimg.cc/4dX0yM4M/iphone15-green.png">
+
+<div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#4CAF50"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/4dX0yM4M/iphone15-green.png')"></div>
+
+<div class="color" style="background:#2196F3"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/1R1tL7K7/iphone15-blue.png')"></div>
+
+<div class="color" style="background:#FF69B4"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/L8s6nJ9G/iphone15-pink.png')"></div>
+
+<div class="color" style="background:#FFD700"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/fT0G7RbT/iphone15-yellow.png')"></div>
+
+<div class="color" style="background:#FFFFFF"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/3x7f2fRv/iphone15-white.png')"></div>
+
+<div class="color" style="background:#000000"
+onclick="cambiarColor('iphone15img','https://i.postimg.cc/bvH7k0qM/iphone15-midnight.png')"></div>
+
 </div>
 
-<div class="card usado" data-modelo="15" data-usd="590">
-  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Celeste</div>
-  <div class="precio-ars"></div>
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 590</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
-<div class="card usado" data-modelo="15" data-usd="590">
-  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Rosa</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 590</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
-
-<div class="card usado" data-modelo="15" data-usd="590">
-  <div class="titulo">iPhone 15 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Negro</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 590</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
-</div>
 
 <div class="card usado" data-modelo="15-pro-max" data-usd="880">
-  <div class="titulo">iPhone 15 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Titanium</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone15promaximg" class="iphone-img"
+src="https://i.postimg.cc/1X6DjsrF/iphone15promax-titanium.png">
+
+<div class="titulo">iPhone 15 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+
+<div class="color" style="background:#B0B0B0"
+onclick="cambiarColor('iphone15promaximg','https://i.postimg.cc/1X6DjsrF/iphone15promax-titanium.png')"></div>
+
+<div class="color" style="background:#0072CE"
+onclick="cambiarColor('iphone15promaximg','https://i.postimg.cc/yYjW6qjq/iphone15promax-alpine-blue.png')"></div>
+
+<div class="color" style="background:#FFFFFF"
+onclick="cambiarColor('iphone15promaximg','https://i.postimg.cc/J0dT7h3K/iphone15promax-white.png')"></div>
+
+<div class="color" style="background:#1C1C1C"
+onclick="cambiarColor('iphone15promaximg','https://i.postimg.cc/4y0G3VxV/iphone15promax-spaceblack.png')"></div>
+
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 880</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 <div class="card usado" data-modelo="16" data-usd="800">
-  <div class="titulo">iPhone 16 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Black⚫️</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone16img" class="iphone-img"
+src="https://i.postimg.cc/4x5QzvQ7/iphone16-black.png">
+
+<div class="titulo">iPhone 16 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+  <div class="color" style="background:#000000"
+    onclick="cambiarColor('iphone16img','https://i.postimg.cc/4x5QzvQ7/iphone16-black.png')"></div>
+  <div class="color" style="background:#FFFFFF"
+    onclick="cambiarColor('iphone16img','https://i.postimg.cc/3xk1w1s7/iphone16-white.png')"></div>
+  <div class="color" style="background:#0072CE"
+    onclick="cambiarColor('iphone16img','https://i.postimg.cc/Z5F4hQ7x/iphone16-blue.png')"></div>
+  <div class="color" style="background:#FF0000"
+    onclick="cambiarColor('iphone16img','https://i.postimg.cc/KzMfFj7H/iphone16-red.png')"></div>
+  <div class="color" style="background:#00A550"
+    onclick="cambiarColor('iphone16img','https://i.postimg.cc/kMvhYwzC/iphone16-green.png')"></div>
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 800</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 <div class="card usado" data-modelo="16-pro" data-usd="930">
-  <div class="titulo">iPhone 16 Pro 128GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 97%</div>
-<div class="detalle">Color Titanium</div>
-  <div class="precio-ars"></div>
+
+<img id="iphone16proimg" class="iphone-img"
+src="https://i.postimg.cc/4x5QzvQ7/iphone16pro-titanium.png">
+
+<div class="titulo">iPhone 16 Pro 128GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 97%</div>
+
+<div class="colores">
+  <div class="color" style="background:#B0A990"
+    onclick="cambiarColor('iphone16proimg','https://i.postimg.cc/4x5QzvQ7/iphone16pro-titanium.png')"></div>
+  <div class="color" style="background:#FFD700"
+    onclick="cambiarColor('iphone16proimg','https://i.postimg.cc/1tq9Rr0F/iphone16pro-gold.png')"></div>
+  <div class="color" style="background:#FFFFFF"
+    onclick="cambiarColor('iphone16proimg','https://i.postimg.cc/3xk1w1s7/iphone16pro-silver.png')"></div>
+  <div class="color" style="background:#003366"
+    onclick="cambiarColor('iphone16proimg','https://i.postimg.cc/7LP6s3Yv/iphone16pro-blue.png')"></div>
+</div>
+
+<div class="precio-ars"></div>
 <div class="precio-usd">USD 930</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
 </div>
 
 <div class="card usado" data-modelo="16-pro-max" data-usd="1100">
-  <div class="titulo">iPhone 16 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
-  <div class="bateria">🔋 100%</div>
-<div class="detalle">Color Desert</div>
-  <div class="precio-ars"></div>
-<div class="precio-usd">USD 1100</div>
-  <button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+<img id="iphone16promaximg" class="iphone-img"
+src="https://i.postimg.cc/4x5QzvQ7/iphone16promax-desert.png">
+
+<div class="titulo">iPhone 16 Pro Max 256GB <span class="tag usado-tag">Usado</span></div>
+
+<div class="bateria">🔋 100%</div>
+
+<div class="colores">
+  <div class="color" style="background:#C2B280"
+    onclick="cambiarColor('iphone16promaximg','https://i.postimg.cc/4x5QzvQ7/iphone16promax-desert.png')"></div>
+  <div class="color" style="background:#B0A990"
+    onclick="cambiarColor('iphone16promaximg','https://i.postimg.cc/2yk6h7yM/iphone16promax-titanium.png')"></div>
+  <div class="color" style="background:#FFD700"
+    onclick="cambiarColor('iphone16promaximg','https://i.postimg.cc/1tq9Rr0F/iphone16promax-gold.png')"></div>
+  <div class="color" style="background:#FFFFFF"
+    onclick="cambiarColor('iphone16promaximg','https://i.postimg.cc/3xk1w1s7/iphone16promax-silver.png')"></div>
+  <div class="color" style="background:#003366"
+    onclick="cambiarColor('iphone16promaximg','https://i.postimg.cc/7LP6s3Yv/iphone16promax-blue.png')"></div>
 </div>
 
+<div class="precio-ars"></div>
+<div class="precio-usd">USD 1100</div>
+
+<button class="boton" onclick="abrirWhatsApp()">Consultar</button>
+
+</div>
 <div class="card" data-modelo="zonagamer" data-usd="550">
   <div class="titulo">Play 5 Digital Slim <span class="tag Nuevo-tag">Nuevo</span></div>
   <div class="precio-ars"></div>
@@ -1029,7 +1281,10 @@ document.addEventListener("click", e => {
   if(!menuBtnContainer.contains(e.target)) menuBtnContainer.classList.remove("active");
 });
 
-
+function cambiarColor(id,imagen){
+document.getElementById(id).src = imagen;
+}
+	
 function ocultarTodo() {
   document.querySelectorAll(".card").forEach(card => card.style.display = "none");
 }
