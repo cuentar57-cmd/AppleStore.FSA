@@ -1363,7 +1363,13 @@ function abrirWhatsApp() {
 function cerrarWhatsapp() {
   document.getElementById("modalWhatsapp").style.display = "none";
 }
-
+window.addEventListener("load", () => {
+  document.querySelectorAll(".iphone-img").forEach(img => {
+    const src = img.src;
+    img.src = ""; // vacía temporal
+    img.src = src; // recarga
+  });
+});
 
 verTodos();
 </script>
