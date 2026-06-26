@@ -352,7 +352,7 @@ nav{animation:asfFadeDown .7s ease both;}
       <p>Escribinos para consultar disponibilidad, precios y formas de entrega.</p>
     </div>
     <div class="info-grid">
-      <div class="info-card"><h3>WhatsApp</h3><p id="waText">Pegá tu número en CONFIG.WHATSAPP.</p></div>
+      <div class="info-card"><h3>WhatsApp</h3><p id="waText">WhatsApp de atención.</p></div>
       <div class="info-card"><h3>Ubicación</h3><p>Formosa Capital.</p></div>
       <div class="info-card"><h3>Horarios</h3><p>Lunes a sábado.</p></div>
     </div>
@@ -645,19 +645,20 @@ function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
 async function loadFromSheets(){
   if(!CONFIG.SHEET_URL) return;
   try{
-    const res = await fetch(CONFIG.SHEET_URL);
+    const url = CONFIG.SHEET_URL + '?action=getProducts&t=' + Date.now();
+    const res = await fetch(url, { cache: 'no-store' });
     const data = await res.json();
-    const rows = Array.isArray(data) ? data : (data.products || []);
+    const rows = Array.isArray(data) ? data : (data.products || data.data || []);
     if(rows.length){
       products = rows.map((p,i)=>({
-        id:p.id || i+1,
-        name:p.name || p.nombre || 'Producto',
-        category:(p.category || p.categoria || 'iphone').toLowerCase(),
-        storage:p.storage || p.almacenamiento || p.descripcion || '',
-        price:p.price || p.precio || 'Consultar',
-        usd:p.usd || p.moneda || 'USD',
-        stock:p.stock !== false && p.stock !== 'sin_stock' && p.stock !== 'Sin stock',
-        image:p.image || p.imagen || '',
+        id:p.id || p.ID || i+1,
+        name:p.name || p.nombre || p.producto || p.Producto || 'Producto',
+        category:(p.category || p.categoria || p.Categoria || p.tipo || 'iphone').toString().toLowerCase(),
+        storage:p.storage || p.almacenamiento || p.capacidad || p.descripcion || p.desc || '',
+        price:p.price || p.precio || p.priceUsd || p.usd || p.ars || 'Consultar',
+        usd:p.usdLabel || p.moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
+        stock:p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock' && p.stock !== 'Sin stock' && p.stock !== '0',
+        image:p.image || p.imagen || p.img || p.foto || '',
         color:p.color || p.Color || p.color_producto || 'Consultar',
         battery:p.battery || p.bateria || p.estado || 'Consultar',
         warranty:p.warranty || p.garantia || 'Garantía del local',
@@ -665,7 +666,7 @@ async function loadFromSheets(){
       }));
     }
   }catch(err){
-    console.warn('No se pudo cargar el catálogo externo:', err);
+    console.warn('No se pudo cargar el catálogo:', err);
   }
 }
 function initContact(){
