@@ -353,8 +353,8 @@ nav{animation:asfFadeDown .7s ease both;}
     </div>
     <div class="info-grid">
       <div class="info-card"><h3>WhatsApp</h3><p id="waText">Pegá tu número en CONFIG.WHATSAPP.</p></div>
-      <div class="info-card"><h3>Ubicación</h3><p>Formosa Capital. Podés cambiar este texto por dirección exacta o zona de entrega.</p></div>
-      <div class="info-card"><h3>Horarios</h3><p>Lunes a sábado. Editá este bloque según el horario real de atención.</p></div>
+      <div class="info-card"><h3>Ubicación</h3><p>Formosa Capital.</p></div>
+      <div class="info-card"><h3>Horarios</h3><p>Lunes a sábado.</p></div>
     </div>
   </section>
 </main>
@@ -675,7 +675,7 @@ function initContact(){
   document.getElementById('floatWhatsApp').href = link;
   const navWa = document.getElementById('navWhatsApp');
   if(navWa) navWa.href = link;
-  document.getElementById('waText').textContent = `WhatsApp configurado: ${CONFIG.WHATSAPP}`;
+  document.getElementById('waText').textContent = : ${CONFIG.WHATSAPP}`;
 }
 (async function init(){
   const theme = localStorage.getItem('asf_theme');
