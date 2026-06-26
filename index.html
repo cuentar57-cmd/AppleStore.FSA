@@ -422,7 +422,7 @@ nav{animation:asfFadeDown .7s ease both;}
 ===================================================== */
 const CONFIG = {
   STORE_NAME: 'Apple Store FSA',
-  SHEET_URL: '',
+  SHEET_URL: 'https://script.google.com/macros/s/AKfycbwfIrEDy_7_Sh9jS3jygkezRfefpZ69R_GJeQpans-4GFt_0jVaW_mMgW4q5rnY9Ej0dQ/exec',
   WHATSAPP: '5493700000000',
   INSTAGRAM: 'https://instagram.com/apple_storefsa',
   CURRENCY: 'ARS'
@@ -675,7 +675,7 @@ function initContact(){
   document.getElementById('floatWhatsApp').href = link;
   const navWa = document.getElementById('navWhatsApp');
   if(navWa) navWa.href = link;
-  document.getElementById('waText').textContent = : ${CONFIG.WHATSAPP}`;
+  document.getElementById('waText').textContent = `WhatsApp: ${CONFIG.WHATSAPP}`;
 }
 (async function init(){
   const theme = localStorage.getItem('asf_theme');
