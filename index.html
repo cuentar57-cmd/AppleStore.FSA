@@ -642,33 +642,51 @@ function toggleTheme(){
   localStorage.setItem('asf_theme', next);
 }
 function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+
+function buildApiUrl(action){
+  const sep = CONFIG.SHEET_URL.includes('?') ? '&' : '?';
+  return CONFIG.SHEET_URL + sep + 'action=' + encodeURIComponent(action) + '&t=' + Date.now();
+}
+function normalizeProductsPayload(data){
+  if(Array.isArray(data)) return data;
+  if(data && Array.isArray(data.products)) return data.products;
+  if(data && Array.isArray(data.data)) return data.data;
+  if(data && data.ok && Array.isArray(data.result)) return data.result;
+  return [];
+}
+
 async function loadFromSheets(){
   if(!CONFIG.SHEET_URL) return;
   try{
-    const url = CONFIG.SHEET_URL + '?action=getProducts&t=' + Date.now();
+    const url = buildApiUrl('getProducts');
     const res = await fetch(url, { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const rows = Array.isArray(data) ? data : (data.products || data.data || []);
+    const rows = normalizeProductsPayload(data);
     if(rows.length){
       products = rows.map((p,i)=>({
-        id:p.id || p.ID || i+1,
-        name:p.name || p.nombre || p.producto || p.Producto || 'Producto',
-        category:(p.category || p.categoria || p.Categoria || p.tipo || 'iphone').toString().toLowerCase(),
-        storage:p.storage || p.almacenamiento || p.capacidad || p.descripcion || p.desc || '',
-        price:p.price || p.precio || p.priceUsd || p.usd || p.ars || 'Consultar',
-        usd:p.usdLabel || p.moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
+        id:p.id || p.ID || p.Id || i+1,
+        name:p.name || p.nombre || p.producto || p.Producto || p.modelo || p.Modelo || 'Producto',
+        category:(p.category || p.categoria || p.Categoria || p.tipo || p.Tipo || 'iphone').toString().toLowerCase(),
+        storage:p.storage || p.almacenamiento || p.capacidad || p.Capacidad || p.descripcion || p.desc || '',
+        price:p.price || p.precio || p.Precio || p.priceUsd || p.usd || p.ars || p.ARS || 'Consultar',
+        usd:p.usdLabel || p.moneda || p.Moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
         stock:p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock' && p.stock !== 'Sin stock' && p.stock !== '0',
-        image:p.image || p.imagen || p.img || p.foto || '',
+        image:p.image || p.imagen || p.Imagen || p.img || p.foto || p.Foto || '',
         color:p.color || p.Color || p.color_producto || 'Consultar',
-        battery:p.battery || p.bateria || p.estado || 'Consultar',
-        warranty:p.warranty || p.garantia || 'Garantía del local',
-        description:p.description || p.descripcion_larga || p.detalle || p.descripcion || ''
+        battery:p.battery || p.bateria || p.Bateria || p.estado || p.Estado || 'Consultar',
+        warranty:p.warranty || p.garantia || p.Garantia || 'Garantía del local',
+        description:p.description || p.descripcion_larga || p.detalle || p.Detalle || p.descripcion || ''
       }));
+      console.log('Catálogo cargado:', products.length, 'productos');
+    }else{
+      console.warn('La URL respondió, pero no devolvió productos:', data);
     }
   }catch(err){
-    console.warn('No se pudo cargar el catálogo:', err);
+    console.warn('No se pudo cargar el catálogo desde el panel:', err);
   }
 }
+
 function initContact(){
   const msg = 'Hola Apple Store FSA, quiero consultar por productos Apple.';
   const link = waLink(msg);
