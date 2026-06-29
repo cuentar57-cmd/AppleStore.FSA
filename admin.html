@@ -583,6 +583,34 @@ const CFG_KEY     = 'asf_config_v3';
 const SESSION_KEY = 'asf_session';
 let API_URL = SCRIPT_URL;
 
+function getApiUrl(){
+  return localStorage.getItem(API_URL_KEY) || (loadCfg && loadCfg().sheetsUrl) || SCRIPT_URL;
+}
+function buildApiUrl(action){
+  const base = getApiUrl();
+  const sep = base.includes('?') ? '&' : '?';
+  return base + sep + 'action=' + encodeURIComponent(action) + '&t=' + Date.now();
+}
+function normalizeProductsForApi(list){
+  return (list || []).map((p,i)=>({
+    id: p.id || String(Date.now()) + '_' + i,
+    name: p.name || p.nombre || p.modelo || 'Producto',
+    category: p.category || p.categoria || 'iphone',
+    storage: p.storage || p.almacenamiento || p.capacidad || '',
+    price: Number(p.priceUsd || p.usd || p.price || 0),
+    priceUsd: Number(p.priceUsd || p.usd || p.price || 0),
+    usd: Number(p.priceUsd || p.usd || p.price || 0),
+    stock: p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock',
+    image: p.image || p.imagen || '',
+    color: p.color || '',
+    battery: p.battery || p.bateria || '',
+    warranty: p.warranty || p.garantia || '',
+    description: p.description || p.descripcion || '',
+    featured: p.featured || p.destacado || false
+  }));
+}
+
+
 // ══════════════════════════════════════════════════════════════
 //  IMÁGENES AUTOMÁTICAS POR MODELO
 //  URLs de imágenes PNG transparentes de Apple (dominio público / press kit)
@@ -1222,7 +1250,7 @@ async function testSheetsConn(){
   if(res) res.classList.add('show');
   if(icon) icon.className='ct-icon loading'; if(title) title.textContent='Probando...'; if(msg) msg.textContent='Conectando...';
   try{
-    const r=await fetch(SCRIPT_URL+'?action=getProducts'); const d=await r.json();
+    const r=await fetch(buildApiUrl('getProducts'), {cache:'no-store'}); const d=await r.json();
     if(!d.ok) throw new Error(d.error||'Respuesta inválida');
     if(icon) icon.className='ct-icon ok'; if(title) title.textContent='Conexión correcta'; if(msg) msg.textContent='Google Sheets respondió bien';
     updateSheetsBadge(true);
@@ -1235,9 +1263,24 @@ async function testSheetsConn(){
 async function syncFromSheets(silent=false){
   try{
     if(!silent) showToast('Importando desde Google Sheets...','info');
-    const res=await fetch(SCRIPT_URL+'?action=getProducts'); const data=await res.json();
+    const res=await fetch(buildApiUrl('getProducts'), {cache:'no-store'}); const data=await res.json();
     if(!data.ok) throw new Error(data.error||'No se pudieron importar productos');
-    products=Array.isArray(data.products)?data.products:[];
+    products=(Array.isArray(data.products)?data.products:(Array.isArray(data.data)?data.data:[])).map((p,i)=>({
+      id:p.id||p.ID||p.Id||String(Date.now())+'_'+i,
+      name:p.name||p.nombre||p.producto||p.Producto||p.modelo||p.Modelo||'Producto',
+      category:(p.category||p.categoria||p.Categoria||p.tipo||p.Tipo||'iphone').toString().toLowerCase(),
+      storage:p.storage||p.almacenamiento||p.capacidad||p.Capacidad||p.descripcion||p.desc||'',
+      priceUsd:Number(p.priceUsd||p.usd||p.price||p.precio||p.Precio||0),
+      usd:Number(p.priceUsd||p.usd||p.price||p.precio||p.Precio||0),
+      price:Number(p.priceUsd||p.usd||p.price||p.precio||p.Precio||0),
+      stock:p.stock!==false && p.stock!=='false' && p.stock!=='sin_stock',
+      image:p.image||p.imagen||p.Imagen||p.foto||p.Foto||'',
+      color:p.color||p.Color||'',
+      battery:p.battery||p.bateria||p.Bateria||'',
+      warranty:p.warranty||p.garantia||p.Garantia||'',
+      description:p.description||p.descripcion||p.Descripcion||'',
+      featured:p.featured||p.destacado||false
+    }));
     renderTable(); updateStats(); localStorage.setItem(STORAGE_KEY,JSON.stringify(products));
     updateSheetsBadge(true);
     if(!silent) showToast(`✓ ${products.length} productos importados`,'success');
@@ -1250,8 +1293,8 @@ async function syncFromSheets(silent=false){
 async function pushToSheets(silent=false){
   try{
     if(!silent) showToast('Exportando a Google Sheets...','info');
-    const productsForSheets=products.map(p=>({...p,priceUsd:Number(p.priceUsd||p.usd||p.price||0),usd:Number(p.priceUsd||p.usd||p.price||0),price:Number(p.priceUsd||p.usd||p.price||0)}));
-    const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'saveProducts',products:productsForSheets})});
+    const productsForSheets=normalizeProductsForApi(products);
+    const res=await fetch(getApiUrl(),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'saveProducts',products:normalizeProductsForApi(productsForSheets)})});
     const data=await res.json();
     if(!data.ok) throw new Error(data.error||'No se pudieron exportar productos');
     updateSheetsBadge(true);
