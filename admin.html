@@ -61,6 +61,15 @@
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="saveSettings()">Guardar configuración</button><button class="btn btn-green" onclick="testApi()">Probar API</button></div>
         </div>
         <div class="section-box">
+          <div class="section-title">Dólar automático</div>
+          <div class="grid">
+            <div><div class="label">Cotización USD → ARS</div><input class="input" id="exchangeRate" type="number" placeholder="Ej: 1250" oninput="saveRateOnly();calculateArs()"></div>
+            <div><div class="label">Tipo de dólar</div><select class="select" id="rateType" onchange="saveRateOnly()"><option value="blue">Blue</option><option value="oficial">Oficial</option><option value="cripto">Cripto</option><option value="tarjeta">Tarjeta</option></select></div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-green" onclick="updateDollarRate()">Actualizar dólar</button><button class="btn btn-ghost" onclick="calculateArs()">Calcular ARS</button></div>
+          <p class="hint" id="rateStatus" style="margin-top:12px">El precio en pesos se calcula automáticamente desde el precio USD.</p>
+        </div>
+        <div class="section-box">
           <div class="section-title">Cloudinary</div>
           <div class="grid"><div><div class="label">Cloud Name</div><input class="input" id="cloudName" placeholder="ej: dwjqzalvq"></div><div><div class="label">Upload Preset unsigned</div><input class="input" id="uploadPreset" placeholder="ej: applestorefsa"></div><div><div class="label">Carpeta</div><input class="input" id="cloudFolder" placeholder="apple-store-fsa"></div></div>
           <p class="hint" style="margin-top:12px">Para subir imágenes, en Cloudinary creá un Upload Preset <b>Unsigned</b>. El panel sube la imagen y pega automáticamente la URL en el producto.</p>
@@ -79,7 +88,7 @@
         <div><div class="label">Nombre visible</div><input class="input" id="fName" placeholder="iPhone 15 Pro Max"></div>
         <div><div class="label">Categoría</div><select class="select" id="fCategory"><option value="iphone">iPhone</option><option value="ipad">iPad</option><option value="macbook">MacBook</option><option value="watch">Apple Watch</option><option value="airpods">AirPods</option><option value="accesorios">Accesorios</option></select></div>
         <div><div class="label">Capacidad / versión</div><input class="input" id="fStorage" placeholder="256GB · Titanio Natural"></div>
-        <div><div class="label">Precio USD</div><input class="input" id="fPriceUsd" type="number" placeholder="0"></div>
+        <div><div class="label">Precio USD</div><input class="input" id="fPriceUsd" type="number" placeholder="0" oninput="calculateArs()"></div>
         <div><div class="label">Precio ARS</div><input class="input" id="fPriceArs" type="number" placeholder="0"></div>
         <div><div class="label">Stock</div><select class="select" id="fStock"><option value="true">Con stock</option><option value="false">Sin stock</option></select></div>
         <div><div class="label">Activo en tienda</div><select class="select" id="fActive"><option value="true">Visible</option><option value="false">Oculto</option></select></div>
@@ -103,22 +112,82 @@ const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbwfIrEDy_7_Sh9jS3
 const LS='asf_admin_pro_v1';
 const SESSION='asf_admin_session';
 let products=[];let editingId=null;
-const MODEL_CATALOG={
-'iPhone 11':{cat:'iphone',colors:[['Negro','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-black-select-2019?wid=940&hei=1112&fmt=png-alpha'],['Blanco','#f5f5f0','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-white-select-2019?wid=940&hei=1112&fmt=png-alpha'],['Rojo','#b80b1d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-red-select-2019?wid=940&hei=1112&fmt=png-alpha'],['Amarillo','#ffe681','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-yellow-select-2019?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 12':{cat:'iphone',colors:[['Negro','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-black-select-2020?wid=940&hei=1112&fmt=png-alpha'],['Blanco','#f5f5f0','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-white-select-2020?wid=940&hei=1112&fmt=png-alpha'],['Azul','#043b73','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-blue-select-2020?wid=940&hei=1112&fmt=png-alpha'],['Verde','#d6ead6','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-green-select-2021?wid=940&hei=1112&fmt=png-alpha'],['Púrpura','#b8afe6','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-purple-select-2021?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 13':{cat:'iphone',colors:[['Medianoche','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-midnight-select-2021?wid=940&hei=1112&fmt=png-alpha'],['Starlight','#f4efe5','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-starlight-select-2021?wid=940&hei=1112&fmt=png-alpha'],['Azul','#276787','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-blue-select-2021?wid=940&hei=1112&fmt=png-alpha'],['Rosa','#f7d8d7','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pink-select-2021?wid=940&hei=1112&fmt=png-alpha'],['Verde','#394c38','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-green-select-2022?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 14':{cat:'iphone',colors:[['Medianoche','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-midnight-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Starlight','#f4efe5','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-starlight-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Azul','#b8cfe7','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-blue-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Púrpura','#e1ddea','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-purple-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Amarillo','#f9e479','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-yellow-select-202303?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 14 Pro':{cat:'iphone',colors:[['Morado oscuro','#4e445d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-deeppurple-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Plata','#f1f2ed','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-silver-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Oro','#f4e8ce','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-gold-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Negro espacial','#3b3b3d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-spacegray-select-202209?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 14 Pro Max':{cat:'iphone',colors:[['Morado oscuro','#4e445d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-max-deeppurple-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Plata','#f1f2ed','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-max-silver-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Oro','#f4e8ce','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-max-gold-select-202209?wid=940&hei=1112&fmt=png-alpha'],['Negro espacial','#3b3b3d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-max-spacegray-select-202209?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 15':{cat:'iphone',colors:[['Negro','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-black-select-202309?wid=940&hei=1112&fmt=png-alpha'],['Azul','#c7d8e8','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-blue-select-202309?wid=940&hei=1112&fmt=png-alpha'],['Verde','#d6e5d4','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-green-select-202309?wid=940&hei=1112&fmt=png-alpha'],['Rosa','#f5ced3','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pink-select-202309?wid=940&hei=1112&fmt=png-alpha'],['Amarillo','#f4e79a','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-yellow-select-202309?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 15 Pro':{cat:'iphone',colors:[['Titanio natural','#aaa49c','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-naturaltitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio azul','#3c4856','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-bluetitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio blanco','#f1f0ed','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-whitetitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio negro','#3c3c3d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-blacktitanium-select?wid=940&hei=1112&fmt=png-alpha']]},
-'iPhone 15 Pro Max':{cat:'iphone',colors:[['Titanio natural','#aaa49c','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-max-naturaltitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio azul','#3c4856','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-max-bluetitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio blanco','#f1f0ed','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-max-whitetitanium-select?wid=940&hei=1112&fmt=png-alpha'],['Titanio negro','#3c3c3d','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-max-blacktitanium-select?wid=940&hei=1112&fmt=png-alpha']]},
-'iPad 10th Gen':{cat:'ipad',colors:[['Azul','#b8d8ee','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-10th-gen-finish-select-202212-blue?wid=940&hei=1112&fmt=png-alpha'],['Rosa','#f6c9c8','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-10th-gen-finish-select-202212-pink?wid=940&hei=1112&fmt=png-alpha'],['Plata','#e8e8e8','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-10th-gen-finish-select-202212-silver?wid=940&hei=1112&fmt=png-alpha'],['Amarillo','#f6dd79','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-10th-gen-finish-select-202212-yellow?wid=940&hei=1112&fmt=png-alpha']]},
-'MacBook Air M2':{cat:'macbook',colors:[['Medianoche','#2e3642','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-midnight-select-202206?wid=940&hei=1112&fmt=png-alpha'],['Starlight','#efe5d4','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-starlight-select-202206?wid=940&hei=1112&fmt=png-alpha'],['Gris espacial','#7d7e80','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-spacegray-select-202206?wid=940&hei=1112&fmt=png-alpha'],['Plata','#dfe1e2','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-silver-select-202206?wid=940&hei=1112&fmt=png-alpha']]},
-'Apple Watch Series 9':{cat:'watch',colors:[['Medianoche','#1d1d1f','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-45-alum-midnight-nc-9s?wid=940&hei=1112&fmt=png-alpha'],['Starlight','#efe8d8','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-45-alum-starlight-nc-9s?wid=940&hei=1112&fmt=png-alpha']]},
-'AirPods Pro 2':{cat:'airpods',colors:[['Blanco','#fff','https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQD83?wid=940&hei=1112&fmt=png-alpha']]}
-};
-function cfg(){return Object.assign({apiUrl:DEFAULT_API_URL,cloudName:'',uploadPreset:'',cloudFolder:'apple-store-fsa'},JSON.parse(localStorage.getItem(LS)||'{}'))}
+function makeDeviceImage(model,colorName,hex,cat){
+  const safe=(v)=>String(v||'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));
+  const label=safe(model).replace('iPhone ','iPhone\n').replace('MacBook ','MacBook\n').replace('Apple Watch ','Watch\n');
+  const c=safe(hex||'#777');
+  const isPhone=cat==='iphone';
+  const isPad=cat==='ipad';
+  const isMac=cat==='macbook';
+  const isWatch=cat==='watch';
+  const isAir=cat==='airpods';
+  let body='';
+  if(isPhone){body=`<rect x="118" y="28" width="144" height="260" rx="32" fill="#080808"/><rect x="128" y="38" width="124" height="240" rx="25" fill="${c}"/><rect x="166" y="49" width="48" height="13" rx="7" fill="#050505"/><circle cx="155" cy="94" r="17" fill="#111" opacity=".85"/><circle cx="198" cy="94" r="17" fill="#111" opacity=".85"/><circle cx="155" cy="137" r="17" fill="#111" opacity=".85"/>`;}
+  else if(isPad){body=`<rect x="82" y="26" width="216" height="274" rx="28" fill="#111"/><rect x="95" y="39" width="190" height="248" rx="22" fill="${c}"/><circle cx="190" cy="276" r="6" fill="#111" opacity=".6"/>`;}
+  else if(isMac){body=`<rect x="66" y="72" width="248" height="158" rx="14" fill="#111"/><rect x="78" y="84" width="224" height="134" rx="9" fill="${c}"/><rect x="45" y="232" width="290" height="28" rx="9" fill="#c9c9cc"/><rect x="154" y="235" width="72" height="7" rx="4" fill="#999"/>`;}
+  else if(isWatch){body=`<rect x="142" y="22" width="96" height="286" rx="34" fill="#333"/><rect x="122" y="88" width="136" height="156" rx="36" fill="#111"/><rect x="132" y="98" width="116" height="136" rx="30" fill="${c}"/><circle cx="255" cy="166" r="6" fill="#666"/>`;}
+  else if(isAir){body=`<ellipse cx="190" cy="214" rx="92" ry="40" fill="#f4f4f4"/><rect x="128" y="168" width="124" height="64" rx="24" fill="#fff"/><path d="M150 112c-22 5-32 24-23 43 7 14 26 17 38 5 13-14 8-53-15-48z" fill="#fff"/><path d="M230 112c22 5 32 24 23 43-7 14-26 17-38 5-13-14-8-53 15-48z" fill="#fff"/>`;}
+  else {body=`<rect x="110" y="70" width="160" height="190" rx="28" fill="${c}"/>`;}
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="380" height="340" viewBox="0 0 380 340"><defs><filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".25"/></filter><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient></defs><rect width="380" height="340" rx="34" fill="#f5f5f7"/><g filter="url(#s)">${body}</g><rect width="380" height="340" rx="34" fill="url(#g)" opacity=".35"/><text x="190" y="316" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#1d1d1f">${safe(model)} · ${safe(colorName)}</text></svg>`;
+  return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+}
+const MODEL_CATALOG=(()=>{
+  const C=(cat,colors)=>({cat,colors});
+  const data={
+    'iPhone SE 2':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f5f5f0'],['Rojo','#b80b1d']]),
+    'iPhone SE 3':C('iphone',[['Medianoche','#1d1d1f'],['Starlight','#f4efe5'],['Rojo','#b80b1d']]),
+    'iPhone 11':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f5f5f0'],['Rojo','#b80b1d'],['Amarillo','#ffe681'],['Verde','#d6ead6'],['Púrpura','#c9b8e8']]),
+    'iPhone 11 Pro':C('iphone',[['Gris espacial','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Verde noche','#4e5f55']]),
+    'iPhone 11 Pro Max':C('iphone',[['Gris espacial','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Verde noche','#4e5f55']]),
+    'iPhone 12 mini':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f5f5f0'],['Azul','#043b73'],['Verde','#d6ead6'],['Púrpura','#b8afe6'],['Rojo','#b80b1d']]),
+    'iPhone 12':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f5f5f0'],['Azul','#043b73'],['Verde','#d6ead6'],['Púrpura','#b8afe6'],['Rojo','#b80b1d']]),
+    'iPhone 12 Pro':C('iphone',[['Grafito','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Azul pacífico','#2f5065']]),
+    'iPhone 12 Pro Max':C('iphone',[['Grafito','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Azul pacífico','#2f5065']]),
+    'iPhone 13 mini':C('iphone',[['Medianoche','#1d1d1f'],['Starlight','#f4efe5'],['Azul','#276787'],['Rosa','#f7d8d7'],['Verde','#394c38'],['Rojo','#b80b1d']]),
+    'iPhone 13':C('iphone',[['Medianoche','#1d1d1f'],['Starlight','#f4efe5'],['Azul','#276787'],['Rosa','#f7d8d7'],['Verde','#394c38'],['Rojo','#b80b1d']]),
+    'iPhone 13 Pro':C('iphone',[['Grafito','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Azul sierra','#9bb5ce'],['Verde alpino','#576856']]),
+    'iPhone 13 Pro Max':C('iphone',[['Grafito','#4b4b4d'],['Plata','#e4e4e2'],['Oro','#f3dfbd'],['Azul sierra','#9bb5ce'],['Verde alpino','#576856']]),
+    'iPhone 14':C('iphone',[['Medianoche','#1d1d1f'],['Starlight','#f4efe5'],['Azul','#b8cfe7'],['Púrpura','#e1ddea'],['Amarillo','#f9e479'],['Rojo','#b80b1d']]),
+    'iPhone 14 Plus':C('iphone',[['Medianoche','#1d1d1f'],['Starlight','#f4efe5'],['Azul','#b8cfe7'],['Púrpura','#e1ddea'],['Amarillo','#f9e479'],['Rojo','#b80b1d']]),
+    'iPhone 14 Pro':C('iphone',[['Morado oscuro','#4e445d'],['Plata','#f1f2ed'],['Oro','#f4e8ce'],['Negro espacial','#3b3b3d']]),
+    'iPhone 14 Pro Max':C('iphone',[['Morado oscuro','#4e445d'],['Plata','#f1f2ed'],['Oro','#f4e8ce'],['Negro espacial','#3b3b3d']]),
+    'iPhone 15':C('iphone',[['Negro','#1d1d1f'],['Azul','#c7d8e8'],['Verde','#d6e5d4'],['Rosa','#f5ced3'],['Amarillo','#f4e79a']]),
+    'iPhone 15 Plus':C('iphone',[['Negro','#1d1d1f'],['Azul','#c7d8e8'],['Verde','#d6e5d4'],['Rosa','#f5ced3'],['Amarillo','#f4e79a']]),
+    'iPhone 15 Pro':C('iphone',[['Titanio natural','#aaa49c'],['Titanio azul','#3c4856'],['Titanio blanco','#f1f0ed'],['Titanio negro','#3c3c3d']]),
+    'iPhone 15 Pro Max':C('iphone',[['Titanio natural','#aaa49c'],['Titanio azul','#3c4856'],['Titanio blanco','#f1f0ed'],['Titanio negro','#3c3c3d']]),
+    'iPhone 16':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f4f4f2'],['Rosa','#f7b7c8'],['Verde azulado','#9fd5cf'],['Ultramarino','#5b73c8']]),
+    'iPhone 16 Plus':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f4f4f2'],['Rosa','#f7b7c8'],['Verde azulado','#9fd5cf'],['Ultramarino','#5b73c8']]),
+    'iPhone 16 Pro':C('iphone',[['Titanio desierto','#c8a98b'],['Titanio natural','#aaa49c'],['Titanio blanco','#f1f0ed'],['Titanio negro','#3c3c3d']]),
+    'iPhone 16 Pro Max':C('iphone',[['Titanio desierto','#c8a98b'],['Titanio natural','#aaa49c'],['Titanio blanco','#f1f0ed'],['Titanio negro','#3c3c3d']]),
+    'iPhone 16e':C('iphone',[['Negro','#1d1d1f'],['Blanco','#f4f4f2']]),
+    'iPad 9th Gen':C('ipad',[['Gris espacial','#6d6e71'],['Plata','#e0e1e2']]),
+    'iPad 10th Gen':C('ipad',[['Azul','#b8d8ee'],['Rosa','#f6c9c8'],['Plata','#e8e8e8'],['Amarillo','#f6dd79']]),
+    'iPad Air M1':C('ipad',[['Gris espacial','#6d6e71'],['Starlight','#efe5d4'],['Rosa','#f3c6c5'],['Púrpura','#c6b7df'],['Azul','#9bb8d5']]),
+    'iPad Air M2':C('ipad',[['Gris espacial','#6d6e71'],['Starlight','#efe5d4'],['Púrpura','#c6b7df'],['Azul','#9bb8d5']]),
+    'iPad Pro M2':C('ipad',[['Gris espacial','#6d6e71'],['Plata','#e0e1e2']]),
+    'iPad Pro M4':C('ipad',[['Negro espacial','#343436'],['Plata','#e0e1e2']]),
+    'MacBook Air M1':C('macbook',[['Oro','#d9bea4'],['Gris espacial','#7d7e80'],['Plata','#dfe1e2']]),
+    'MacBook Air M2':C('macbook',[['Medianoche','#2e3642'],['Starlight','#efe5d4'],['Gris espacial','#7d7e80'],['Plata','#dfe1e2']]),
+    'MacBook Air M3':C('macbook',[['Medianoche','#2e3642'],['Starlight','#efe5d4'],['Gris espacial','#7d7e80'],['Plata','#dfe1e2']]),
+    'MacBook Pro M3':C('macbook',[['Negro espacial','#343436'],['Plata','#dfe1e2']]),
+    'MacBook Pro M4':C('macbook',[['Negro espacial','#343436'],['Plata','#dfe1e2']]),
+    'Apple Watch SE':C('watch',[['Medianoche','#1d1d1f'],['Starlight','#efe8d8'],['Plata','#e0e1e2']]),
+    'Apple Watch Series 9':C('watch',[['Medianoche','#1d1d1f'],['Starlight','#efe8d8'],['Plata','#e0e1e2'],['Rosa','#f6c9c8'],['Rojo','#b80b1d']]),
+    'Apple Watch Series 10':C('watch',[['Negro azabache','#111'],['Oro rosa','#e3b9a4'],['Plata','#e0e1e2']]),
+    'Apple Watch Ultra 2':C('watch',[['Titanio natural','#aaa49c'],['Titanio negro','#333']]),
+    'AirPods 2':C('airpods',[['Blanco','#fff']]),
+    'AirPods 3':C('airpods',[['Blanco','#fff']]),
+    'AirPods 4':C('airpods',[['Blanco','#fff']]),
+    'AirPods Pro 2':C('airpods',[['Blanco','#fff']]),
+    'AirPods Max':C('airpods',[['Plata','#dfe1e2'],['Gris espacial','#6d6e71'],['Azul cielo','#a8c7df'],['Rosa','#f2b7b8'],['Verde','#b7c9b5']]),
+    'Cargador USB-C 20W':C('accesorios',[['Blanco','#fff']]),
+    'Cable USB-C':C('accesorios',[['Blanco','#fff']]),
+    'Funda Silicone':C('accesorios',[['Negro','#111'],['Blanco','#fff'],['Rosa','#f6c9c8'],['Azul','#9bb8d5']])
+  };
+  Object.keys(data).forEach(model=>{data[model].colors=data[model].colors.map(c=>[c[0],c[1],c[2]||makeDeviceImage(model,c[0],c[1],data[model].cat)])});
+  return data;
+})();
+function cfg(){return Object.assign({apiUrl:DEFAULT_API_URL,cloudName:'',uploadPreset:'',cloudFolder:'apple-store-fsa',exchangeRate:0,rateType:'blue'},JSON.parse(localStorage.getItem(LS)||'{}'))}
 function saveCfg(c){localStorage.setItem(LS,JSON.stringify(Object.assign(cfg(),c)))}
 function apiUrl(){return cfg().apiUrl||DEFAULT_API_URL}
 async function apiGet(){const r=await fetch(apiUrl()+'?action=getProducts&ts='+Date.now());return await r.json()}
@@ -131,7 +200,7 @@ function toast(msg,type='ok'){const t=document.getElementById('toast');t.textCon
 function setBadge(ok,msg){apiBadge.classList.toggle('ok',!!ok);apiBadgeText.textContent=msg}
 async function syncProducts(){try{setBadge(false,'Sincronizando...');const d=await apiGet();products=Array.isArray(d)?d:(d.products||[]);renderProducts();setBadge(true,'Conectado');toast('Productos sincronizados')}catch(e){setBadge(false,'Error de API');toast('No se pudo conectar: '+e.message,'err')}}
 async function testApi(){try{const d=await apiGet();setBadge(true,'API OK');toast('API conectada: '+(Array.isArray(d)?d.length:(d.products||[]).length)+' productos')}catch(e){toast(e.message,'err')}}
-function saveSettings(){saveCfg({apiUrl:apiUrl.value,cloudName:cloudName.value,uploadPreset:uploadPreset.value,cloudFolder:cloudFolder.value});toast('Configuración guardada');testApi()}
+function saveSettings(){saveCfg({apiUrl:apiUrl.value,cloudName:cloudName.value,uploadPreset:uploadPreset.value,cloudFolder:cloudFolder.value,exchangeRate:Number(exchangeRate.value)||0,rateType:rateType.value});toast('Configuración guardada');testApi()}
 async function saveAll(){try{const d=await apiPost('saveProducts',{products});if(!d.ok)throw new Error(d.error||'Error');toast('Guardado en la planilla');syncProducts()}catch(e){toast('No se pudo guardar: '+e.message,'err')}}
 function renderStats(){const total=products.length,stock=products.filter(p=>p.stock!==false).length,active=products.filter(p=>p.active!==false).length,models=new Set(products.map(p=>p.model||p.name)).size;stats.innerHTML=`<div class="stat"><b>${total}</b><span>Productos</span></div><div class="stat"><b>${stock}</b><span>Con stock</span></div><div class="stat"><b>${active}</b><span>Visibles</span></div><div class="stat"><b>${models}</b><span>Modelos</span></div>`}
 function renderProducts(){renderStats();const q=search.value.toLowerCase(),cat=catFilter.value;const list=products.filter(p=>(!cat||p.category===cat)&&(`${p.name} ${p.model} ${p.storage} ${p.color}`.toLowerCase().includes(q)));empty.classList.toggle('hidden',list.length>0);tbody.innerHTML=list.map(p=>`<tr><td><div class="prod"><div class="thumb">${p.image?`<img src="${p.image}">`:'📱'}</div><div><div class="prod-name">${p.name||'Producto'}</div><div class="prod-meta">${p.storage||'—'} · ${p.condition||'—'}</div></div></div></td><td>${labelCat(p.category)}</td><td>USD ${Number(p.priceUsd||p.usd||0).toLocaleString('es-AR')}</td><td>$ ${Number(p.priceArs||0).toLocaleString('es-AR')}</td><td>${p.color||'—'}</td><td><span class="pill ${p.stock!==false?'on':'off'}">${p.stock!==false?'Stock':'Sin stock'}</span></td><td><div class="actions"><button class="btn btn-ghost btn-small" onclick="openProduct('${p.id}')">Editar</button><button class="btn btn-red btn-small" onclick="delProduct('${p.id}')">Borrar</button></div></td></tr>`).join('')}
@@ -144,11 +213,37 @@ function updatePreview(){previewBox.innerHTML=fImage.value?`<img src="${fImage.v
 fImage?.addEventListener?.('input',updatePreview);
 function openProduct(id){editingId=id||null;fillModels();const p=id?products.find(x=>String(x.id)===String(id)):{};modalTitle.textContent=id?'Editar producto':'Nuevo producto';fModel.value=p.model||p.name||'';fName.value=p.name||'';fCategory.value=p.category||'iphone';fStorage.value=p.storage||'';fPriceUsd.value=p.priceUsd||p.usd||p.price||'';fPriceArs.value=p.priceArs||'';fStock.value=String(p.stock!==false);fActive.value=String(p.active!==false);fCondition.value=p.condition||'';fBattery.value=p.battery||'';fWarranty.value=p.warranty||'Garantía del local';fColor.value=p.color||'';fDescription.value=p.description||'';fImage.value=p.image||'';const s=p.specs||{};sPantalla.value=s.Pantalla||'';sChip.value=s.Chip||'';sCamara.value=s.Camara||'';sPuerto.value=s.Puerto||'';sExtra.value=Object.entries(s).filter(([k])=>!['Pantalla','Chip','Camara','Puerto'].includes(k)).map(([k,v])=>`${k}: ${v}`).join('\n');fBenefits.value=Array.isArray(p.benefits)?p.benefits.join('\n'):'';renderColorGallery(fModel.value,p.color);updatePreview();productModal.classList.add('open')}
 function closeProduct(){productModal.classList.remove('open');editingId=null}
-function collect(){const specs={Pantalla:sPantalla.value,Chip:sChip.value,Camara:sCamara.value,Puerto:sPuerto.value};sExtra.value.split('\n').forEach(l=>{const i=l.indexOf(':');if(i>0)specs[l.slice(0,i).trim()]=l.slice(i+1).trim()});Object.keys(specs).forEach(k=>!specs[k]&&delete specs[k]);const model=fModel.value||fName.value;const imgs=(MODEL_CATALOG[model]?.colors||[]).map(([color,hex,url])=>({color,hex,url}));return{id:editingId||String(Date.now()),name:fName.value.trim()||model,model,category:fCategory.value,storage:fStorage.value.trim(),priceUsd:Number(fPriceUsd.value)||0,priceArs:Number(fPriceArs.value)||0,stock:fStock.value==='true',active:fActive.value==='true',condition:fCondition.value.trim(),battery:fBattery.value.trim(),warranty:fWarranty.value.trim(),color:fColor.value.trim(),image:fImage.value.trim(),description:fDescription.value.trim(),specs,benefits:fBenefits.value.split('\n').map(x=>x.trim()).filter(Boolean),imagesByColor:imgs}}
+function collect(){const specs={Pantalla:sPantalla.value,Chip:sChip.value,Camara:sCamara.value,Puerto:sPuerto.value};sExtra.value.split('\n').forEach(l=>{const i=l.indexOf(':');if(i>0)specs[l.slice(0,i).trim()]=l.slice(i+1).trim()});Object.keys(specs).forEach(k=>!specs[k]&&delete specs[k]);const model=fModel.value||fName.value;const imgs=(MODEL_CATALOG[model]?.colors||[]).map(([color,hex,url])=>({color,hex,url}));return{id:editingId||String(Date.now()),name:fName.value.trim()||model,model,category:fCategory.value,storage:fStorage.value.trim(),priceUsd:Number(fPriceUsd.value)||0,priceArs:Number(fPriceArs.value)||Math.round((Number(fPriceUsd.value)||0)*(Number(exchangeRate?.value||cfg().exchangeRate)||0)),stock:fStock.value==='true',active:fActive.value==='true',condition:fCondition.value.trim(),battery:fBattery.value.trim(),warranty:fWarranty.value.trim(),color:fColor.value.trim(),image:fImage.value.trim(),description:fDescription.value.trim(),specs,benefits:fBenefits.value.split('\n').map(x=>x.trim()).filter(Boolean),imagesByColor:imgs}}
 async function saveProduct(){const p=collect();if(!p.name)return toast('Falta nombre','err');const i=products.findIndex(x=>String(x.id)===String(p.id));if(i>=0)products[i]=p;else products.push(p);renderProducts();closeProduct();try{const d=await apiPost(i>=0?'updateProduct':'addProduct',{product:p});if(!d.ok)throw new Error(d.error||'Error');toast('Producto guardado')}catch(e){toast('Quedó local, pero no subió: '+e.message,'err')}}
 async function delProduct(id){if(!confirm('¿Borrar producto?'))return;products=products.filter(p=>String(p.id)!==String(id));renderProducts();try{await apiPost('deleteProduct',{id});toast('Producto borrado')}catch(e){toast('Borrado local, pero no en planilla','err')}}
 async function uploadCloudinary(ev){const file=ev.target.files[0];if(!file)return;const c=cfg();if(!c.cloudName||!c.uploadPreset){cloudStatus.textContent='Configurá Cloudinary primero';cloudStatus.className='cloud-status err';return}cloudStatus.textContent='Subiendo imagen...';cloudStatus.className='cloud-status';const fd=new FormData();fd.append('file',file);fd.append('upload_preset',c.uploadPreset);if(c.cloudFolder)fd.append('folder',c.cloudFolder);try{const r=await fetch(`https://api.cloudinary.com/v1_1/${c.cloudName}/image/upload`,{method:'POST',body:fd});const d=await r.json();if(!d.secure_url)throw new Error(d.error?.message||'Cloudinary no devolvió URL');fImage.value=d.secure_url;updatePreview();cloudStatus.textContent='Imagen subida correctamente';cloudStatus.className='cloud-status ok';toast('Imagen subida a Cloudinary')}catch(e){cloudStatus.textContent=e.message;cloudStatus.className='cloud-status err'}}
-function initSettings(){const c=cfg();apiUrl.value=c.apiUrl;cloudName.value=c.cloudName;uploadPreset.value=c.uploadPreset;cloudFolder.value=c.cloudFolder}
+
+function saveRateOnly(){saveCfg({exchangeRate:Number(exchangeRate?.value)||0,rateType:rateType?.value||'blue'})}
+function calculateArs(){
+  const usd=Number(fPriceUsd?.value)||0;
+  const rate=Number(exchangeRate?.value||cfg().exchangeRate)||0;
+  if(usd>0 && rate>0 && fPriceArs){fPriceArs.value=Math.round(usd*rate);}
+}
+async function updateDollarRate(){
+  const type=(rateType?.value||cfg().rateType||'blue');
+  if(rateStatus)rateStatus.textContent='Buscando cotización...';
+  try{
+    const r=await fetch('https://dolarapi.com/v1/dolares/'+encodeURIComponent(type),{cache:'no-store'});
+    const d=await r.json();
+    const rate=Number(d.venta||d.promedio||d.compra||0);
+    if(!rate)throw new Error('No se pudo leer la cotización');
+    exchangeRate.value=rate;
+    saveCfg({exchangeRate:rate,rateType:type});
+    calculateArs();
+    if(rateStatus)rateStatus.textContent='Cotización actualizada: $ '+rate.toLocaleString('es-AR')+' por USD';
+    toast('Dólar actualizado');
+  }catch(e){
+    if(rateStatus)rateStatus.textContent='No se pudo actualizar automático. Podés escribir la cotización manualmente.';
+    toast('No se pudo actualizar el dólar','err');
+  }
+}
+
+function initSettings(){const c=cfg();apiUrl.value=c.apiUrl;cloudName.value=c.cloudName;uploadPreset.value=c.uploadPreset;cloudFolder.value=c.cloudFolder;if(window.exchangeRate)exchangeRate.value=c.exchangeRate||'';if(window.rateType)rateType.value=c.rateType||'blue';if(window.rateStatus&&c.exchangeRate)rateStatus.textContent='Cotización guardada: $ '+Number(c.exchangeRate).toLocaleString('es-AR')+' por USD'}
 async function init(){initSettings();await syncProducts();}
 if(sessionStorage.getItem(SESSION)==='1'){loginScreen.classList.add('hidden');app.classList.remove('hidden');init()}
 </script>
