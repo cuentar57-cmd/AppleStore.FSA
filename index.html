@@ -425,7 +425,8 @@ const CONFIG = {
   SHEET_URL: 'https://script.google.com/macros/s/AKfycbwfIrEDy_7_Sh9jS3jygkezRfefpZ69R_GJeQpans-4GFt_0jVaW_mMgW4q5rnY9Ej0dQ/exec',
   WHATSAPP: '5493700000000',
   INSTAGRAM: 'https://instagram.com/apple_storefsa',
-  CURRENCY: 'ARS'
+  CURRENCY: 'ARS',
+  DOLLAR_RATE: 1450
 };
 
 /* Productos de muestra. */
@@ -455,11 +456,45 @@ function money(value){
   if(!n) return 'Consultar';
   return '$ ' + n.toLocaleString('es-AR');
 }
+function moneyARS(value){
+  const n = priceNumber(value);
+  if(!n) return 'Consultar';
+  return '$ ' + Math.round(n).toLocaleString('es-AR') + ' ARS';
+}
+function moneyUSD(value){
+  const n = priceNumber(value);
+  if(!n) return 'Consultar';
+  return 'USD ' + n.toLocaleString('es-AR');
+}
+function dollarRate(){
+  return priceNumber(CONFIG.DOLLAR_RATE) || 1450;
+}
+function productUsdPrice(p){
+  return priceNumber(p.priceUsd ?? p.usdPrice ?? p.usd_value ?? p.usd);
+}
+function productArsPrice(p){
+  const directArs = priceNumber(p.priceArs ?? p.ars ?? p.precioArs ?? p.precio_ars);
+  if(directArs) return directArs;
+  const usd = productUsdPrice(p);
+  if(usd) return usd * dollarRate();
+  return priceNumber(p.price);
+}
+function productPriceHTML(p){
+  const usd = productUsdPrice(p);
+  const ars = productArsPrice(p);
+  if(usd){
+    return `<div class="price">${moneyARS(ars)}</div><div class="usd">${moneyUSD(usd)} · dólar ${money(dollarRate())}</div>`;
+  }
+  if(ars){
+    return `<div class="price">${moneyARS(ars)}</div><div class="usd">${p.usd || ''}</div>`;
+  }
+  return `<div class="price">Consultar</div><div class="usd"></div>`;
+}
 function cartTotalNumber(){
   let total = 0, hasNumeric = false;
   cart.forEach(item=>{
-    const n = priceNumber(item.price);
-    if(n){ total += n * item.qty; hasNumeric = true; }
+    const n = productArsPrice(item);
+    if(n){ total += n * (item.qty || 1); hasNumeric = true; }
   });
   return hasNumeric ? total : null;
 }
@@ -494,8 +529,7 @@ function renderProducts(){
       <div class="product-image">${productVisual(p)}</div>
       <h3>${p.name}</h3>
       <div class="product-meta">${p.storage || 'Consultar características'}</div>
-      <div class="price">${money(p.price)}</div>
-      <div class="usd">${p.usd || ''}</div>
+      ${productPriceHTML(p)}
       <div class="card-actions">
         <button class="btn-small" onclick="openDetail(${p.id})">Ver detalle</button>
         <button class="btn-small secondary" onclick="addToCart(${p.id})">Agregar al carrito</button>
@@ -554,7 +588,7 @@ function updateCart(){
         <div class="cart-info">
           <h4>${p.name}</h4>
           <p>${p.storage || ''}</p>
-          <div class="cart-line-price">${money(p.price)} ${priceNumber(p.price) ? 'c/u' : ''}</div>
+          <div class="cart-line-price">${productArsPrice(p) ? moneyARS(productArsPrice(p)) + ' c/u' : 'Consultar'}</div>
           <div class="cart-qty">
             <button class="qty-btn" onclick="changeQty('${p.id}',-1)">−</button>
             <span class="qty-num">${p.qty || 1}</span>
@@ -566,7 +600,7 @@ function updateCart(){
     `).join('');
   }
   const total = cartTotalNumber();
-  document.getElementById('cartTotal').textContent = total ? money(total) : 'Consultar';
+  document.getElementById('cartTotal').textContent = total ? moneyARS(total) : 'Consultar';
 }
 function openCart(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeCart(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
@@ -581,7 +615,7 @@ function sendCartWhatsApp(){
   if(!cart.length) return openCheckout();
   const list = cart.map((p,i)=>`${i+1}. ${p.name} ${p.storage || ''} x${p.qty || 1}`).join('\n');
   const total = cartTotalNumber();
-  window.open(waLink(`Hola Apple Store FSA, quiero consultar por estos productos:\n${list}\n\nTotal estimado: ${total ? money(total) : 'Consultar'}`),'_blank');
+  window.open(waLink(`Hola Apple Store FSA, quiero consultar por estos productos:\n${list}\n\nTotal estimado: ${total ? moneyARS(total) : 'Consultar'}`),'_blank');
 }
 function openDetail(id){
   const p = products.find(x=>String(x.id)===String(id));
@@ -593,7 +627,7 @@ function openDetail(id){
       <div>
         <div class="detail-title">${p.name}</div>
         <div class="detail-muted">${p.description || 'Consultá disponibilidad, condición, color y precio actualizado.'}</div>
-        <div class="detail-price">${money(p.price)} <span style="font-size:.9rem;color:var(--muted)">${p.usd || ''}</span></div>
+        <div class="detail-price">${productArsPrice(p) ? moneyARS(productArsPrice(p)) : 'Consultar'} ${productUsdPrice(p) ? `<span style="font-size:.9rem;color:var(--muted)">${moneyUSD(productUsdPrice(p))}</span>` : ''}</div>
         <div class="detail-specs">
           <div class="detail-spec"><span>Categoría</span><strong>${categoryLabel(p.category)}</strong></div>
           <div class="detail-spec"><span>Capacidad</span><strong>${p.storage || 'Consultar'}</strong></div>
@@ -630,7 +664,7 @@ function submitCheckout(event){
   const city = document.getElementById('clientCity').value.trim();
   const payment = document.getElementById('paymentMethod').value;
   const notes = document.getElementById('clientNotes').value.trim();
-  const list = cart.map((p,i)=>`${i+1}. ${p.name} ${p.storage || ''} x${p.qty || 1} - ${money(p.price)}`).join('\n');
+  const list = cart.map((p,i)=>`${i+1}. ${p.name} ${p.storage || ''} x${p.qty || 1} - ${productArsPrice(p) ? moneyARS(productArsPrice(p)) : 'Consultar'}${productUsdPrice(p) ? ' (' + moneyUSD(productUsdPrice(p)) + ')' : ''}`).join('\n');
   const total = cartTotalNumber();
   const msg = `Hola Apple Store FSA, quiero realizar una consulta/pedido.\n\nProductos:\n${list}\n\nTotal estimado: ${total ? money(total) : 'Consultar'}\n\nDatos:\nNombre: ${name}\nTeléfono: ${phone}\nCiudad: ${city}\nForma de pago: ${payment}\nObservaciones: ${notes || '-'} `;
   window.open(waLink(msg),'_blank');
@@ -671,8 +705,10 @@ function normalizeProductFromApi(p,i){
     name:p.name || p.nombre || p.producto || p.Producto || p.modelo || p.Modelo || 'Producto',
     category:normalizeCategory(p.category || p.categoria || p.Categoria || p.tipo || p.Tipo || 'iphone'),
     storage:p.storage || p.almacenamiento || p.capacidad || p.Capacidad || p.descripcion || p.desc || '',
-    price:p.price || p.precio || p.Precio || p.priceUsd || p.usd || p.ars || p.ARS || 'Consultar',
-    usd:p.usdLabel || p.moneda || p.Moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
+    price:p.price || p.precio || p.Precio || p.priceArs || p.ars || p.ARS || 'Consultar',
+    priceUsd:p.priceUsd || p.precioUsd || p.precio_usd || p.USD || p.usd || '',
+    priceArs:p.priceArs || p.precioArs || p.precio_ars || p.ARS || p.ars || '',
+    usd:p.usdLabel || p.moneda || p.Moneda || (p.priceUsd || p.precioUsd || p.USD || p.usd ? 'USD' : 'ARS'),
     stock:p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock' && p.stock !== '0',
     image:p.image || p.imagen || p.Imagen || p.foto || p.Foto || '',
     color:p.color || p.Color || '',
