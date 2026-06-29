@@ -643,9 +643,20 @@ function toggleTheme(){
 }
 function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
 
+
 function buildApiUrl(action){
   const sep = CONFIG.SHEET_URL.includes('?') ? '&' : '?';
   return CONFIG.SHEET_URL + sep + 'action=' + encodeURIComponent(action) + '&t=' + Date.now();
+}
+function normalizeCategory(cat){
+  const c = (cat || '').toString().trim().toLowerCase();
+  if(['sellado','sellados','usado','usados','iphone','iphones'].includes(c)) return 'iphone';
+  if(['tablet','ipad','ipads'].includes(c)) return 'ipad';
+  if(['mac','macbook','macbooks','notebook'].includes(c)) return 'macbook';
+  if(['watch','apple watch','reloj'].includes(c)) return 'watch';
+  if(['airpods','audio','auriculares'].includes(c)) return 'airpods';
+  if(['accesorio','accesorios','gaming'].includes(c)) return 'accesorios';
+  return c || 'iphone';
 }
 function normalizeProductsPayload(data){
   if(Array.isArray(data)) return data;
@@ -654,36 +665,45 @@ function normalizeProductsPayload(data){
   if(data && data.ok && Array.isArray(data.result)) return data.result;
   return [];
 }
-
+function normalizeProductFromApi(p,i){
+  return {
+    id:p.id || p.ID || p.Id || i+1,
+    name:p.name || p.nombre || p.producto || p.Producto || p.modelo || p.Modelo || 'Producto',
+    category:normalizeCategory(p.category || p.categoria || p.Categoria || p.tipo || p.Tipo || 'iphone'),
+    storage:p.storage || p.almacenamiento || p.capacidad || p.Capacidad || p.descripcion || p.desc || '',
+    price:p.price || p.precio || p.Precio || p.priceUsd || p.usd || p.ars || p.ARS || 'Consultar',
+    usd:p.usdLabel || p.moneda || p.Moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
+    stock:p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock' && p.stock !== '0',
+    image:p.image || p.imagen || p.Imagen || p.foto || p.Foto || '',
+    color:p.color || p.Color || '',
+    battery:p.battery || p.bateria || p.Bateria || '',
+    warranty:p.warranty || p.garantia || p.Garantia || 'Garantía del local',
+    description:p.description || p.descripcion || p.Descripcion || p.storage || p.almacenamiento || 'Producto Apple disponible para consulta.'
+  };
+}
+async function fetchProductsFromApi(){
+  const urls = [buildApiUrl('getProducts'), CONFIG.SHEET_URL + (CONFIG.SHEET_URL.includes('?') ? '&' : '?') + 'action=getProducts'];
+  let lastError = null;
+  for(const url of urls){
+    try{
+      const res = await fetch(url, { cache:'no-store' });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return normalizeProductsPayload(data);
+    }catch(err){
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('No se pudo cargar la API');
+}
 async function loadFromSheets(){
   if(!CONFIG.SHEET_URL) return;
   try{
-    const url = buildApiUrl('getProducts');
-    const res = await fetch(url, { cache: 'no-store' });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const rows = normalizeProductsPayload(data);
-    if(rows.length){
-      products = rows.map((p,i)=>({
-        id:p.id || p.ID || p.Id || i+1,
-        name:p.name || p.nombre || p.producto || p.Producto || p.modelo || p.Modelo || 'Producto',
-        category:(p.category || p.categoria || p.Categoria || p.tipo || p.Tipo || 'iphone').toString().toLowerCase(),
-        storage:p.storage || p.almacenamiento || p.capacidad || p.Capacidad || p.descripcion || p.desc || '',
-        price:p.price || p.precio || p.Precio || p.priceUsd || p.usd || p.ars || p.ARS || 'Consultar',
-        usd:p.usdLabel || p.moneda || p.Moneda || (p.priceUsd || p.usd ? 'USD' : 'ARS'),
-        stock:p.stock !== false && p.stock !== 'false' && p.stock !== 'sin_stock' && p.stock !== 'Sin stock' && p.stock !== '0',
-        image:p.image || p.imagen || p.Imagen || p.img || p.foto || p.Foto || '',
-        color:p.color || p.Color || p.color_producto || 'Consultar',
-        battery:p.battery || p.bateria || p.Bateria || p.estado || p.Estado || 'Consultar',
-        warranty:p.warranty || p.garantia || p.Garantia || 'Garantía del local',
-        description:p.description || p.descripcion_larga || p.detalle || p.Detalle || p.descripcion || ''
-      }));
-      console.log('Catálogo cargado:', products.length, 'productos');
-    }else{
-      console.warn('La URL respondió, pero no devolvió productos:', data);
-    }
+    const rows = await fetchProductsFromApi();
+    products = rows.map(normalizeProductFromApi);
+    console.log('Apple Store FSA conectado:', products.length, 'productos cargados');
   }catch(err){
-    console.warn('No se pudo cargar el catálogo desde el panel:', err);
+    console.warn('No se pudo cargar la conexión:', err);
   }
 }
 
