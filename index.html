@@ -229,6 +229,17 @@ nav{animation:asfFadeDown .7s ease both;}
   .product-card,.cat-card,.info-card{opacity:1!important;transform:none!important;}
 }
 
+/* ===== SECCIONES DE PRODUCTOS ===== */
+.products-grid.grouped{display:block;}
+.product-section{margin-bottom:54px;}
+.product-section:last-child{margin-bottom:0;}
+.product-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:6px 0 22px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.product-section-title h3{font-size:clamp(1.55rem,3vw,2.35rem);letter-spacing:-.055em;line-height:1;font-weight:900;margin-bottom:6px;}
+.product-section-title p{color:var(--muted);font-size:.93rem;line-height:1.5;}
+.product-section-count{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:8px 13px;font-size:.75rem;font-weight:900;color:var(--muted);white-space:nowrap;}
+.product-section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:22px;}
+@media(max-width:600px){.product-section-head{align-items:flex-start;flex-direction:column}.product-section-grid{grid-template-columns:repeat(2,1fr);gap:10px}.product-section{margin-bottom:42px}}
+
 </style>
 </head>
 <body>
@@ -512,21 +523,9 @@ function placeholderByCategory(cat){
 function productVisual(p){
   return p.image ? `<img src="${p.image}" alt="${p.name}">` : placeholderByCategory(p.category);
 }
-function renderProducts(){
-  const grid = document.getElementById('productsGrid');
-  const search = document.getElementById('searchInput').value.toLowerCase().trim();
-  const selectCat = document.getElementById('categorySelect').value;
-  const cat = selectCat || currentFilter;
-  const filtered = products.filter(p => {
-    const matchesSearch = `${p.name} ${p.storage} ${p.category} ${p.color || ''} ${p.condition || ''}`.toLowerCase().includes(search);
-    const matchesCat = !cat || p.category === cat;
-    return matchesSearch && matchesCat;
-  });
-  if(!filtered.length){
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No hay productos para mostrar.</div>';
-    return;
-  }
-  grid.innerHTML = filtered.map(p => `
+function productCardHTML(p){
+  const safeId = String(p.id).replace(/'/g,"\\'");
+  return `
     <article class="product-card">
       <div class="badge">${p.stock ? categoryLabel(p.category) : 'Sin stock'}</div>
       <div class="product-image">${productVisual(p)}</div>
@@ -534,11 +533,74 @@ function renderProducts(){
       <div class="product-meta">${p.storage || 'Consultar características'}</div>
       ${productPriceHTML(p)}
       <div class="card-actions">
-        <button class="btn-small" onclick="openDetail(${p.id})">Ver detalle</button>
-        <button class="btn-small secondary" onclick="addToCart(${p.id})">Agregar al carrito</button>
+        <button class="btn-small" onclick="openDetail('${safeId}')">Ver detalle</button>
+        <button class="btn-small secondary" onclick="addToCart('${safeId}')">Agregar al carrito</button>
       </div>
     </article>
-  `).join('');
+  `;
+}
+function productGroupKey(p){
+  const c = String(p.category || '').toLowerCase().trim();
+  const txt = `${p.name || ''} ${p.condition || ''} ${p.estado || ''} ${p.description || ''}`.toLowerCase();
+  if(['iphone_sellado','sellado','nuevo','sealed'].includes(c)) return 'sellados';
+  if(['iphone_seminuevo','seminuevo','usado','used'].includes(c)) return 'seminuevos';
+  if(c === 'iphone'){
+    if(txt.includes('sellado') || txt.includes('nuevo')) return 'sellados';
+    if(txt.includes('semi') || txt.includes('usado')) return 'seminuevos';
+  }
+  return 'otros';
+}
+function productSectionHTML(title, subtitle, items){
+  if(!items.length) return '';
+  return `
+    <div class="product-section">
+      <div class="product-section-head">
+        <div class="product-section-title">
+          <h3>${title}</h3>
+          <p>${subtitle}</p>
+        </div>
+        <div class="product-section-count">${items.length} ${items.length === 1 ? 'producto' : 'productos'}</div>
+      </div>
+      <div class="product-section-grid">
+        ${items.map(productCardHTML).join('')}
+      </div>
+    </div>
+  `;
+}
+function renderProducts(){
+  const grid = document.getElementById('productsGrid');
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const selectCat = document.getElementById('categorySelect').value;
+  const cat = selectCat || currentFilter;
+  const filtered = products.filter(p => {
+    const matchesSearch = `${p.name} ${p.storage} ${p.category} ${p.color || ''} ${p.condition || ''}`.toLowerCase().includes(search);
+    const group = productGroupKey(p);
+    const matchesCat = !cat || p.category === cat || (cat === 'iphone_sellado' && group === 'sellados') || (cat === 'iphone_seminuevo' && group === 'seminuevos');
+    return matchesSearch && matchesCat;
+  });
+  if(!filtered.length){
+    grid.classList.remove('grouped');
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No hay productos para mostrar.</div>';
+    return;
+  }
+
+  const viewingSingleCategory = !!cat;
+  if(viewingSingleCategory){
+    grid.classList.remove('grouped');
+    grid.innerHTML = filtered.map(productCardHTML).join('');
+    return;
+  }
+
+  const sellados = filtered.filter(p => productGroupKey(p) === 'sellados');
+  const seminuevos = filtered.filter(p => productGroupKey(p) === 'seminuevos');
+  const otros = filtered.filter(p => !['sellados','seminuevos'].includes(productGroupKey(p)));
+
+  grid.classList.add('grouped');
+  grid.innerHTML = [
+    productSectionHTML('iPhone Sellados', 'Equipos nuevos, cerrados de fábrica y listos para estrenar.', sellados),
+    productSectionHTML('iPhone Seminuevos', 'Equipos seleccionados, revisados y publicados con sus detalles.', seminuevos),
+    productSectionHTML('Otros productos Apple', 'Accesorios, iPad, MacBook, Apple Watch, AirPods y más.', otros)
+  ].join('') || '<div class="empty">No hay productos para mostrar.</div>';
 }
 function setFilter(btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
