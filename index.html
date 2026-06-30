@@ -297,7 +297,8 @@ nav{animation:asfFadeDown .7s ease both;}
       <input type="text" id="searchInput" placeholder="Buscar iPhone, MacBook, AirPods..." oninput="renderProducts()">
       <select id="categorySelect" onchange="renderProducts()">
         <option value="">Todas las categorías</option>
-        <option value="iphone">iPhone</option>
+        <option value="iphone_sellado">iPhone Sellados</option>
+        <option value="iphone_seminuevo">iPhone Seminuevos</option>
         <option value="ipad">iPad</option>
         <option value="macbook">MacBook</option>
         <option value="watch">Apple Watch</option>
@@ -308,7 +309,8 @@ nav{animation:asfFadeDown .7s ease both;}
 
     <div class="filters" id="filters">
       <button class="filter-btn active" data-cat="" onclick="setFilter(this)">Todos</button>
-      <button class="filter-btn" data-cat="iphone" onclick="setFilter(this)">iPhone</button>
+      <button class="filter-btn" data-cat="iphone_sellado" onclick="setFilter(this)">iPhone Sellados</button>
+      <button class="filter-btn" data-cat="iphone_seminuevo" onclick="setFilter(this)">iPhone Seminuevos</button>
       <button class="filter-btn" data-cat="ipad" onclick="setFilter(this)">iPad</button>
       <button class="filter-btn" data-cat="macbook" onclick="setFilter(this)">MacBook</button>
       <button class="filter-btn" data-cat="watch" onclick="setFilter(this)">Watch</button>
@@ -324,7 +326,8 @@ nav{animation:asfFadeDown .7s ease both;}
       <p>Una tienda simple, limpia y fácil de actualizar.</p>
     </div>
     <div class="categories">
-      <div class="cat-card" onclick="quickCategory('iphone')"><div class="cat-ico">📱</div><h3>iPhone</h3><p>Sellados y seminuevos.</p></div>
+      <div class="cat-card" onclick="quickCategory('iphone_sellado')"><div class="cat-ico">📱</div><h3>iPhone Sellados</h3><p>Equipos nuevos, cerrados de fábrica.</p></div>
+      <div class="cat-card" onclick="quickCategory('iphone_seminuevo')"><div class="cat-ico">📱</div><h3>iPhone Seminuevos</h3><p>Equipos seleccionados y revisados.</p></div>
       <div class="cat-card" onclick="quickCategory('ipad')"><div class="cat-ico">📲</div><h3>iPad</h3><p>Para estudiar, crear y trabajar.</p></div>
       <div class="cat-card" onclick="quickCategory('macbook')"><div class="cat-ico">💻</div><h3>MacBook</h3><p>Equipos Apple premium.</p></div>
       <div class="cat-card" onclick="quickCategory('watch')"><div class="cat-ico">⌚</div><h3>Apple Watch</h3><p>Series y accesorios.</p></div>
@@ -431,9 +434,9 @@ const CONFIG = {
 
 /* Productos de muestra. */
 let products = [
-  {id:1,name:'iPhone 15 Pro Max',category:'iphone',storage:'256GB · Titanio Natural',price:'Consultar',usd:'USD',stock:true,image:'',color:'Titanio Natural',battery:'100%',warranty:'Garantía del local',description:'Equipo premium Apple. Consultá disponibilidad, color, estado y precio actualizado.'},
-  {id:2,name:'iPhone 14 Pro',category:'iphone',storage:'128GB · Negro espacial',price:'Consultar',usd:'USD',stock:true,image:'',color:'Negro espacial',battery:'Consultar',warranty:'Garantía del local',description:'iPhone Pro con excelente rendimiento, cámara avanzada y diseño premium.'},
-  {id:3,name:'iPhone 13',category:'iphone',storage:'128GB · Medianoche',price:'Consultar',usd:'USD',stock:true,image:'',color:'Medianoche',battery:'Consultar',warranty:'Garantía del local',description:'Una opción equilibrada para quienes buscan iPhone moderno y confiable.'},
+  {id:1,name:'iPhone 15 Pro Max',category:'iphone_sellado',storage:'256GB · Titanio Natural',price:'Consultar',usd:'USD',stock:true,image:'',color:'Titanio Natural',battery:'100%',warranty:'Garantía del local',description:'Equipo premium Apple. Consultá disponibilidad, color, estado y precio actualizado.'},
+  {id:2,name:'iPhone 14 Pro',category:'iphone_seminuevo',storage:'128GB · Negro espacial',price:'Consultar',usd:'USD',stock:true,image:'',color:'Negro espacial',battery:'Consultar',warranty:'Garantía del local',description:'iPhone Pro con excelente rendimiento, cámara avanzada y diseño premium.'},
+  {id:3,name:'iPhone 13',category:'iphone_seminuevo',storage:'128GB · Medianoche',price:'Consultar',usd:'USD',stock:true,image:'',color:'Medianoche',battery:'Consultar',warranty:'Garantía del local',description:'Una opción equilibrada para quienes buscan iPhone moderno y confiable.'},
   {id:4,name:'MacBook Air M2',category:'macbook',storage:'8GB · 256GB SSD',price:'Consultar',usd:'USD',stock:true,image:'',color:'Consultar',battery:'Consultar',warranty:'Garantía del local',description:'MacBook liviana y potente para estudio, trabajo y creación de contenido.'},
   {id:5,name:'iPad 10th Gen',category:'ipad',storage:'64GB · WiFi',price:'Consultar',usd:'USD',stock:true,image:'',color:'Consultar',battery:'Consultar',warranty:'Garantía del local',description:'iPad ideal para estudiar, trabajar, ver contenido y usar apps creativas.'},
   {id:6,name:'Apple Watch Series 9',category:'watch',storage:'45mm · GPS',price:'Consultar',usd:'USD',stock:true,image:'',color:'Consultar',battery:'Consultar',warranty:'Garantía del local',description:'Apple Watch para actividad, salud, notificaciones y uso diario.'},
@@ -499,11 +502,11 @@ function cartTotalNumber(){
   return hasNumeric ? total : null;
 }
 function categoryLabel(cat){
-  return {iphone:'iPhone',ipad:'iPad',macbook:'MacBook',watch:'Watch',airpods:'AirPods',accesorios:'Accesorios'}[cat] || cat;
+  return {iphone:'iPhone',iphone_sellado:'iPhone Sellado',iphone_seminuevo:'iPhone Seminuevo',sellado:'iPhone Sellado',seminuevo:'iPhone Seminuevo',usado:'iPhone Seminuevo',ipad:'iPad',macbook:'MacBook',watch:'Watch',airpods:'AirPods',accesorios:'Accesorios'}[cat] || cat;
 }
 function placeholderByCategory(cat){
   const icons = {iphone:'📱',ipad:'📲',macbook:'💻',watch:'⌚',airpods:'🎧',accesorios:'🔌'};
-  if(cat === 'iphone') return '<div class="placeholder-device"></div>';
+  if(cat === 'iphone' || cat === 'iphone_sellado' || cat === 'iphone_seminuevo') return '<div class="placeholder-device"></div>';
   return `<div style="font-size:4.5rem">${icons[cat] || '📦'}</div>`;
 }
 function productVisual(p){
@@ -515,7 +518,7 @@ function renderProducts(){
   const selectCat = document.getElementById('categorySelect').value;
   const cat = selectCat || currentFilter;
   const filtered = products.filter(p => {
-    const matchesSearch = `${p.name} ${p.storage} ${p.category} ${p.color || ''}`.toLowerCase().includes(search);
+    const matchesSearch = `${p.name} ${p.storage} ${p.category} ${p.color || ''} ${p.condition || ''}`.toLowerCase().includes(search);
     const matchesCat = !cat || p.category === cat;
     return matchesSearch && matchesCat;
   });
@@ -584,7 +587,7 @@ function updateCart(){
   } else {
     box.innerHTML = cart.map((p)=>`
       <div class="cart-item">
-        <div class="cart-thumb">${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : (p.category === 'iphone' ? '📱' : '📦')}</div>
+        <div class="cart-thumb">${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : (['iphone','iphone_sellado','iphone_seminuevo'].includes(p.category) ? '📱' : '📦')}</div>
         <div class="cart-info">
           <h4>${p.name}</h4>
           <p>${p.storage || ''}</p>
@@ -684,7 +687,9 @@ function buildApiUrl(action){
 }
 function normalizeCategory(cat){
   const c = (cat || '').toString().trim().toLowerCase();
-  if(['sellado','sellados','usado','usados','iphone','iphones'].includes(c)) return 'iphone';
+  if(['iphone_sellado','iphone-sellado','sellado','sellados','iphones_sellados'].includes(c)) return 'iphone_sellado';
+  if(['iphone_seminuevo','iphone-seminuevo','seminuevo','seminuevos','usado','usados','iphones_seminuevos'].includes(c)) return 'iphone_seminuevo';
+  if(['iphone','iphones'].includes(c)) return 'iphone_sellado';
   if(['tablet','ipad','ipads'].includes(c)) return 'ipad';
   if(['mac','macbook','macbooks','notebook'].includes(c)) return 'macbook';
   if(['watch','apple watch','reloj'].includes(c)) return 'watch';
