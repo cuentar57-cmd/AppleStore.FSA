@@ -239,6 +239,20 @@ nav{animation:asfFadeDown .7s ease both;}
 .product-section-count{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:8px 13px;font-size:.75rem;font-weight:900;color:var(--muted);white-space:nowrap;}
 .product-section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:22px;}
 @media(max-width:600px){.product-section-head{align-items:flex-start;flex-direction:column}.product-section-grid{grid-template-columns:repeat(2,1fr);gap:10px}.product-section{margin-bottom:42px}}
+/* ===== DEV CREDIT BADGE ===== */
+@keyframes badgeShimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 14px rgba(188,24,136,.45)}50%{box-shadow:0 0 26px rgba(240,148,51,.7)}}
+.dev-credit{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);width:100%;margin-top:4px}
+.dev-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888,#9b59b6);background-size:200% 100%;color:#fff;font-weight:700;font-size:.72rem;padding:5px 13px 5px 10px;border-radius:100px;text-decoration:none;letter-spacing:.3px;animation:badgeShimmer 3s linear infinite,badgePulse 2.5s ease-in-out infinite;box-shadow:0 0 14px rgba(188,24,136,.45);transition:transform .2s,box-shadow .2s}
+.dev-badge:hover{transform:scale(1.07)}
+.dev-badge svg{width:14px;height:14px;fill:#fff;flex-shrink:0}
+/* ===== SELECTOR DE CONTACTO WHATSAPP ===== */
+.wa-contact-list{display:grid;gap:12px}
+.wa-contact-btn{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:18px;background:var(--bg-soft);color:var(--text);cursor:pointer;transition:.2s;text-align:left;width:100%;font-family:inherit}
+.wa-contact-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#25D366}
+.wa-contact-avatar{width:44px;height:44px;border-radius:999px;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.05rem;flex-shrink:0}
+.wa-contact-info strong{display:block;font-size:.98rem}
+.wa-contact-info span{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
 
 </style>
 </head>
@@ -304,10 +318,7 @@ nav{animation:asfFadeDown .7s ease both;}
       <p>Descubrí nuestra selección de equipos Apple con garantía y stock actualizado.</p>
     </div>
 
-    <div class="config-note">
-      <strong>Compra segura:</strong> consultá disponibilidad, precio actualizado y formas de pago antes de confirmar tu pedido.
-      <br><span id="dollarRateInfo">Actualizando cotización del dólar…</span>
-    </div>
+   
 
     <div class="search-row">
       <input type="text" id="searchInput" placeholder="Buscar iPhone, MacBook, AirPods..." oninput="renderProducts()">
@@ -381,6 +392,12 @@ nav{animation:asfFadeDown .7s ease both;}
 <footer>
   <div><strong>Apple Store FSA</strong><br>Catálogo Apple blanco y negro.</div>
   <div>Atención personalizada por WhatsApp</div>
+  <div class="dev-credit">Desarrollado por&nbsp;
+    <a class="dev-badge" href="https://instagram.com/btarratweb" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      @btarratweb
+    </a>
+  </div>
 </footer>
 
 <a class="wa-float" id="floatWhatsApp" target="_blank" title="WhatsApp">✆</a>
@@ -434,6 +451,18 @@ nav{animation:asfFadeDown .7s ease both;}
   </div>
 </div>
 
+<div class="modal-wrap" id="waChooseModal" onclick="closeWaChooseOutside(event)">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-top">
+      <h3>¿Con quién querés hablar?</h3>
+      <button class="icon-btn" onclick="closeWaChoose()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="wa-contact-list" id="waContactList"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* =====================================================
    CONFIGURACIÓN PRINCIPAL
@@ -442,7 +471,13 @@ nav{animation:asfFadeDown .7s ease both;}
 const CONFIG = {
   STORE_NAME: 'Apple Store FSA',
   SHEET_URL: 'https://script.google.com/macros/s/AKfycbwfIrEDy_7_Sh9jS3jygkezRfefpZ69R_GJeQpans-4GFt_0jVaW_mMgW4q5rnY9Ej0dQ/exec',
-  WHATSAPP: '5493700000000',
+  /* ===== CONTACTOS DE WHATSAPP =====
+     Cuando alguien toca un botón de WhatsApp (Consultar, Finalizar compra, etc.)
+     va a poder elegir a quién escribirle. Agregá, sacá o editá contactos acá. */
+  WHATSAPP_CONTACTS: [
+    { name: 'Franco', number: '5493704588507' },
+    { name: 'Lucas', number: '5493704236311' }
+  ],
   INSTAGRAM: 'https://instagram.com/apple_storefsa',
   CURRENCY: 'ARS',
   DOLLAR_RATE: 1450, // valor de respaldo si falla la consulta automática
@@ -692,18 +727,53 @@ function updateCart(){
 }
 function openCart(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeCart(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
-function waLink(message){return `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(message)}`}
+function waLink(number, message){return `https://wa.me/${number}?text=${encodeURIComponent(message)}`}
+
+/* ===== SELECTOR DE CONTACTO DE WHATSAPP =====
+   En vez de escribir directo a un número fijo, se le pregunta al
+   usuario con quién quiere hablar (Franco o Lucas) y recién ahí
+   se abre WhatsApp con el mensaje ya armado. */
+let pendingWaMessage = '';
+function renderWaContactList(){
+  const el = document.getElementById('waContactList');
+  if(!el) return;
+  el.innerHTML = (CONFIG.WHATSAPP_CONTACTS || []).map((c,i)=>`
+    <button type="button" class="wa-contact-btn" onclick="chooseWhatsAppContact(${i})">
+      <span class="wa-contact-avatar">${(c.name || '?').slice(0,1).toUpperCase()}</span>
+      <span class="wa-contact-info"><strong>${c.name}</strong><span>Enviar por WhatsApp</span></span>
+    </button>
+  `).join('');
+}
+function openWhatsAppChooser(message){
+  pendingWaMessage = message;
+  const contacts = CONFIG.WHATSAPP_CONTACTS || [];
+  if(contacts.length <= 1){
+    if(contacts[0]) window.open(waLink(contacts[0].number, message),'_blank');
+    return;
+  }
+  renderWaContactList();
+  document.getElementById('waChooseModal').classList.add('open');
+}
+function chooseWhatsAppContact(index){
+  const c = (CONFIG.WHATSAPP_CONTACTS || [])[index];
+  if(!c) return;
+  window.open(waLink(c.number, pendingWaMessage),'_blank');
+  closeWaChoose();
+}
+function closeWaChoose(){document.getElementById('waChooseModal').classList.remove('open')}
+function closeWaChooseOutside(e){if(e.target.id === 'waChooseModal') closeWaChoose();}
+
 function consultProduct(id){
   const p = products.find(x=>String(x.id)===String(id));
   if(!p) return;
   const msg = `Hola Apple Store FSA, quiero consultar por: ${p.name} ${p.storage ? '('+p.storage+')' : ''}`;
-  window.open(waLink(msg),'_blank');
+  openWhatsAppChooser(msg);
 }
 function sendCartWhatsApp(){
   if(!cart.length) return openCheckout();
   const list = cart.map((p,i)=>`${i+1}. ${p.name} ${p.storage || ''} x${p.qty || 1}`).join('\n');
   const total = cartTotalNumber();
-  window.open(waLink(`Hola Apple Store FSA, quiero consultar por estos productos:\n${list}\n\nTotal estimado: ${total ? moneyARS(total) : 'Consultar'}`),'_blank');
+  openWhatsAppChooser(`Hola Apple Store FSA, quiero consultar por estos productos:\n${list}\n\nTotal estimado: ${total ? moneyARS(total) : 'Consultar'}`);
 }
 function openDetail(id){
   const p = products.find(x=>String(x.id)===String(id));
@@ -755,7 +825,8 @@ function submitCheckout(event){
   const list = cart.map((p,i)=>`${i+1}. ${p.name} ${p.storage || ''} x${p.qty || 1} - ${productArsPrice(p) ? moneyARS(productArsPrice(p)) : 'Consultar'}${productUsdPrice(p) ? ' (' + moneyUSD(productUsdPrice(p)) + ')' : ''}`).join('\n');
   const total = cartTotalNumber();
   const msg = `Hola Apple Store FSA, quiero realizar una consulta/pedido.\n\nProductos:\n${list}\n\nTotal estimado: ${total ? money(total) : 'Consultar'}\n\nDatos:\nNombre: ${name}\nTeléfono: ${phone}\nCiudad: ${city}\nForma de pago: ${payment}\nObservaciones: ${notes || '-'} `;
-  window.open(waLink(msg),'_blank');
+  closeCheckout();
+  openWhatsAppChooser(msg);
 }
 function toggleTheme(){
   const html = document.documentElement;
@@ -835,12 +906,13 @@ async function loadFromSheets(){
 
 function initContact(){
   const msg = 'Hola Apple Store FSA, quiero consultar por productos Apple.';
-  const link = waLink(msg);
-  document.getElementById('heroWhatsApp').href = link;
-  document.getElementById('floatWhatsApp').href = link;
+  const openChooser = (e)=>{ e.preventDefault(); openWhatsAppChooser(msg); };
+  document.getElementById('heroWhatsApp').addEventListener('click', openChooser);
+  document.getElementById('floatWhatsApp').addEventListener('click', openChooser);
   const navWa = document.getElementById('navWhatsApp');
-  if(navWa) navWa.href = link;
-  document.getElementById('waText').textContent = `WhatsApp: ${CONFIG.WHATSAPP}`;
+  if(navWa) navWa.addEventListener('click', openChooser);
+  const names = (CONFIG.WHATSAPP_CONTACTS || []).map(c=>c.name).join(' · ');
+  document.getElementById('waText').textContent = `Elegí con quién hablar: ${names}`;
 }
 
 /* Aplica los links de CONFIG.LINKS a todos los botones marcados con data-link */
