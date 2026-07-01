@@ -255,6 +255,8 @@ nav{animation:asfFadeDown .7s ease both;}
       <a href="#categorias">Categorías</a>
       <a href="#garantia">Garantía</a>
       <a href="#contacto">Contacto</a>
+      <a href="#" data-link="consolas" target="_blank" rel="noopener">Consolas</a>
+      <a href="#" data-link="pcs" target="_blank" rel="noopener">PCs</a>
     </div>
     <div class="nav-actions">
       <button class="icon-btn" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema">
@@ -283,6 +285,8 @@ nav{animation:asfFadeDown .7s ease both;}
       <div class="hero-buttons">
         <a class="btn btn-primary" href="#productos">Ver productos</a>
         <a class="btn btn-ghost" id="heroWhatsApp" target="_blank">Consultar por WhatsApp</a>
+        <a class="btn btn-ghost" data-link="consolas" target="_blank" rel="noopener">🎮 Ver Consolas</a>
+        <a class="btn btn-ghost" data-link="pcs" target="_blank" rel="noopener">💻 Ver PCs</a>
       </div>
     </div>
     <div class="hero-visual">
@@ -302,6 +306,7 @@ nav{animation:asfFadeDown .7s ease both;}
 
     <div class="config-note">
       <strong>Compra segura:</strong> consultá disponibilidad, precio actualizado y formas de pago antes de confirmar tu pedido.
+      <br><span id="dollarRateInfo">Actualizando cotización del dólar…</span>
     </div>
 
     <div class="search-row">
@@ -440,7 +445,25 @@ const CONFIG = {
   WHATSAPP: '5493700000000',
   INSTAGRAM: 'https://instagram.com/apple_storefsa',
   CURRENCY: 'ARS',
-  DOLLAR_RATE: 1450
+  DOLLAR_RATE: 1450, // valor de respaldo si falla la consulta automática
+
+  /* ===== DÓLAR AUTOMÁTICO =====
+     Se consulta solo, cada vez que se carga la página, la cotización
+     del dólar blue y se le suman los pesos de DOLLAR_MARKUP.
+     Podés cambiar DOLLAR_API_URL por 'https://dolarapi.com/v1/dolares/oficial'
+     si preferís usar el dólar oficial en vez del blue. */
+  DOLLAR_API_URL: 'https://dolarapi.com/v1/dolares/blue',
+  DOLLAR_MARKUP: 20,
+  DOLLAR_AUTO_REFRESH_MIN: 10, // cada cuántos minutos se vuelve a consultar
+
+  /* ===== BOTONES A OTRAS SECCIONES/SITIOS =====
+     Reemplazá estos '#' por los links reales de tus páginas de
+     Consolas y PCs (pueden ser otra página tuya, otro sitio, o un
+     grupo/catálogo de WhatsApp). */
+  LINKS: {
+    consolas: '#',
+    pcs: '#'
+  }
 };
 
 /* Productos de muestra. */
@@ -819,13 +842,59 @@ function initContact(){
   if(navWa) navWa.href = link;
   document.getElementById('waText').textContent = `WhatsApp: ${CONFIG.WHATSAPP}`;
 }
+
+/* Aplica los links de CONFIG.LINKS a todos los botones marcados con data-link */
+function initExternalLinks(){
+  Object.keys(CONFIG.LINKS || {}).forEach(key=>{
+    document.querySelectorAll(`[data-link="${key}"]`).forEach(el=>{
+      el.href = CONFIG.LINKS[key];
+    });
+  });
+}
+
+/* Consulta la cotización del dólar y le suma el margen configurado */
+async function fetchDollarRate(){
+  try{
+    const res = await fetch(CONFIG.DOLLAR_API_URL);
+    if(!res.ok) throw new Error('Respuesta no válida de la API del dólar');
+    const data = await res.json();
+    const base = priceNumber(data.venta) || priceNumber(data.compra);
+    if(base){
+      const markup = priceNumber(CONFIG.DOLLAR_MARKUP) || 0;
+      CONFIG.DOLLAR_RATE = base + markup;
+      CONFIG.DOLLAR_RATE_LABEL = data.nombre || 'Dólar';
+    }
+  }catch(err){
+    console.warn('No se pudo actualizar el dólar automáticamente, se usa el valor de respaldo:', err);
+  }
+  updateDollarBadge();
+}
+
+function updateDollarBadge(){
+  const el = document.getElementById('dollarRateInfo');
+  if(!el) return;
+  const markup = priceNumber(CONFIG.DOLLAR_MARKUP) || 0;
+  const label = CONFIG.DOLLAR_RATE_LABEL ? `Dólar ${CONFIG.DOLLAR_RATE_LABEL}` : 'Dólar';
+  el.textContent = `${label} + $${markup}: ${money(CONFIG.DOLLAR_RATE)} · se actualiza solo`;
+}
+
 (async function init(){
   const theme = localStorage.getItem('asf_theme');
   if(theme) document.documentElement.dataset.theme = theme;
   initContact();
+  initExternalLinks();
+  await fetchDollarRate();
   await loadFromSheets();
   renderProducts();
   updateCart();
+
+  const refreshMin = priceNumber(CONFIG.DOLLAR_AUTO_REFRESH_MIN);
+  if(refreshMin){
+    setInterval(async()=>{
+      await fetchDollarRate();
+      renderProducts();
+    }, refreshMin * 60 * 1000);
+  }
 })();
 
 
