@@ -480,7 +480,7 @@ const CONFIG = {
   ],
   INSTAGRAM: 'https://instagram.com/apple_storefsa',
   CURRENCY: 'ARS',
-  DOLLAR_RATE: 1450, // valor de respaldo si falla la consulta automática
+  DOLLAR_RATE: 1570, // valor fijo del dólar
 
   /* ===== DÓLAR AUTOMÁTICO =====
      Se consulta solo, cada vez que se carga la página, la cotización
@@ -489,7 +489,7 @@ const CONFIG = {
      si preferís usar el dólar oficial en vez del blue. */
   DOLLAR_API_URL: 'https://dolarapi.com/v1/dolares/blue',
   DOLLAR_MARKUP: 20,
-  DOLLAR_AUTO_REFRESH_MIN: 10, // cada cuántos minutos se vuelve a consultar
+  DOLLAR_AUTO_REFRESH_MIN: 0, // actualización automática desactivada
 
   /* ===== BOTONES A OTRAS SECCIONES/SITIOS =====
      Reemplazá estos '#' por los links reales de tus páginas de
@@ -539,7 +539,7 @@ function moneyUSD(value){
   return 'USD ' + n.toLocaleString('es-AR');
 }
 function dollarRate(){
-  return priceNumber(CONFIG.DOLLAR_RATE) || 1450;
+  return priceNumber(CONFIG.DOLLAR_RATE) || 1570;
 }
 function productUsdPrice(p){
   return priceNumber(p.priceUsd ?? p.usdPrice ?? p.usd_value ?? p.usd);
@@ -947,7 +947,7 @@ function updateDollarBadge(){
   if(!el) return;
   const markup = priceNumber(CONFIG.DOLLAR_MARKUP) || 0;
   const label = CONFIG.DOLLAR_RATE_LABEL ? `Dólar ${CONFIG.DOLLAR_RATE_LABEL}` : 'Dólar';
-  el.textContent = `${label} + $${markup}: ${money(CONFIG.DOLLAR_RATE)} · se actualiza solo`;
+  el.textContent = `Dólar fijo: ${money(CONFIG.DOLLAR_RATE)}`;
 }
 
 (async function init(){
@@ -955,7 +955,7 @@ function updateDollarBadge(){
   if(theme) document.documentElement.dataset.theme = theme;
   initContact();
   initExternalLinks();
-  await fetchDollarRate();
+  updateDollarBadge();
   await loadFromSheets();
   renderProducts();
   updateCart();
@@ -963,7 +963,7 @@ function updateDollarBadge(){
   const refreshMin = priceNumber(CONFIG.DOLLAR_AUTO_REFRESH_MIN);
   if(refreshMin){
     setInterval(async()=>{
-      await fetchDollarRate();
+      updateDollarBadge();
       renderProducts();
     }, refreshMin * 60 * 1000);
   }
