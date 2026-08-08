@@ -1,0 +1,42 @@
+name: Fijar dolar 1570
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fijar-dolar-1570.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-dollar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fijar dólar en 1570
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = s
+          s = s.replace('DOLLAR_RATE: 1450, // valor de respaldo si falla la consulta automática', 'DOLLAR_RATE: 1570, // valor fijo del dólar')
+          s = s.replace('DOLLAR_AUTO_REFRESH_MIN: 10, // cada cuántos minutos se vuelve a consultar', 'DOLLAR_AUTO_REFRESH_MIN: 0, // actualización automática desactivada')
+          s = s.replace('return priceNumber(CONFIG.DOLLAR_RATE) || 1450;', 'return priceNumber(CONFIG.DOLLAR_RATE) || 1570;')
+          s = s.replace('await fetchDollarRate();', 'updateDollarBadge();')
+          s = s.replace("el.textContent = `${label} + $${markup}: ${money(CONFIG.DOLLAR_RATE)} · se actualiza solo`;", "el.textContent = `Dólar fijo: ${money(CONFIG.DOLLAR_RATE)}`;")
+          if s == old:
+              raise SystemExit('No se encontraron los textos esperados; no se modificó index.html')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit y push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Fijar dólar en 1570'
+          git push
