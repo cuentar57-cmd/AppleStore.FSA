@@ -1,0 +1,58 @@
+name: Ordenar productos web
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ordenar-productos-web.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  ordenar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aplicar orden por modelo y precio
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = 'function renderProducts(){'
+          helper = r'''function productSortComparator(a,b){
+  const textA = `${a.name || ''} ${a.model || ''}`.toLowerCase();
+  const textB = `${b.name || ''} ${b.model || ''}`.toLowerCase();
+  const num = txt => {
+    const m = txt.match(/iphone\s*(\d+)/i);
+    return m ? Number(m[1]) : Number.MAX_SAFE_INTEGER;
+  };
+  const modelA = num(textA), modelB = num(textB);
+  if(modelA !== modelB) return modelA - modelB;
+
+  const nameCmp = String(a.name || a.model || '').localeCompare(String(b.name || b.model || ''), 'es', {numeric:true, sensitivity:'base'});
+  if(nameCmp !== 0) return nameCmp;
+
+  const priceA = productUsdPrice(a) || (productArsPrice(a) ? productArsPrice(a) / dollarRate() : Number.MAX_SAFE_INTEGER);
+  const priceB = productUsdPrice(b) || (productArsPrice(b) ? productArsPrice(b) / dollarRate() : Number.MAX_SAFE_INTEGER);
+  if(priceA !== priceB) return priceA - priceB;
+
+  return String(a.storage || '').localeCompare(String(b.storage || ''), 'es', {numeric:true, sensitivity:'base'});
+}
+'''
+          if 'function productSortComparator(a,b)' not in s:
+              s = s.replace(marker, helper + marker, 1)
+          needle = "  if(!filtered.length){"
+          replacement = "  filtered.sort(productSortComparator);\n  if(!filtered.length){"
+          if replacement not in s:
+              s = s.replace(needle, replacement, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Guardar cambio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Ordenar productos por modelo y precio"
+          git push
