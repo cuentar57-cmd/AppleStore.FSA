@@ -97,8 +97,9 @@ function patchPanel(html){
   const colorCode='const MODEL_COLORS = '+JSON.stringify(colors,null,2)+';';
   html=html.replace(/const MODEL_IMAGES = \{[\s\S]*?\n\};/,imgCode);
   html=html.replace(/const MODEL_COLORS = \{[\s\S]*?\n\};/,colorCode);
-  html=html.replace('Colores PNG del modelo','Imágenes del modelo · Google Drive');
-  html=html.replace('Elegí un color y el panel carga la imagen PNG del modelo. También podés subir una propia a Cloudinary.','Elegí un color y el panel carga automáticamente la imagen vinculada desde Google Drive. También podés subir una propia a Cloudinary.');
+  html=html.replace('Colores PNG del modelo','');
+  html=html.replace('Este modelo no tiene imágenes automáticas cargadas.','');
+  html=html.replace('Elegí un color y el panel carga la imagen PNG del modelo. También podés subir una propia a Cloudinary.','');
   return html;
 }
 async function sha256(value){const data=new TextEncoder().encode(value);const hash=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
