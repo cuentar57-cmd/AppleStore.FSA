@@ -2,14 +2,14 @@ name: Ordenar productos web
 
 on:
   push:
-    paths:
-      - '.github/workflows/ordenar-productos-web.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   ordenar:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
