@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/ordenar-productos-web.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
