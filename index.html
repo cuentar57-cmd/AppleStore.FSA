@@ -12,6 +12,7 @@ html,body{margin:0;min-height:100%;background:#fff;font-family:Arial,sans-serif}
 <div id="loading">Cargando Apple Store FSA…</div>
 <script>
 const SOURCE='https://raw.githubusercontent.com/cuentar57-cmd/AppleStore.FSA/04aef0f08963ea5e6945dab7d9dff1f0657abc9a/index.html';
+const SETTINGS_URL='https://raw.githubusercontent.com/cuentar57-cmd/AppleStore.FSA/main/store-settings.json';
 
 function injectOrdering(html){
   const marker='function renderProducts(){';
@@ -45,22 +46,32 @@ function injectOrdering(html){
 }
 `;
 
-  if(!html.includes('function productSortComparator(a,b)')){
-    html=html.replace(marker,helper+marker);
-  }
-
+  if(!html.includes('function productSortComparator(a,b)')) html=html.replace(marker,helper+marker);
   const needle='  if(!filtered.length){';
-  if(!html.includes('filtered.sort(productSortComparator);')){
-    html=html.replace(needle,'  filtered.sort(productSortComparator);\n'+needle);
-  }
+  if(!html.includes('filtered.sort(productSortComparator);')) html=html.replace(needle,'  filtered.sort(productSortComparator);\n'+needle);
+  return html;
+}
+
+function injectDollarRate(html, rate){
+  const n=Number(rate);
+  if(!Number.isFinite(n)||n<=0) return html;
+  html=html.replace(/DOLLAR_RATE:\s*[0-9.]+\s*,/,'DOLLAR_RATE: '+n+',');
+  html=html.replace(/return priceNumber\(CONFIG\.DOLLAR_RATE\) \|\| [0-9.]+;/,'return priceNumber(CONFIG.DOLLAR_RATE) || '+n+';');
   return html;
 }
 
 (async()=>{
   try{
-    const r=await fetch(SOURCE,{cache:'no-store'});
-    if(!r.ok) throw new Error('No se pudo cargar la tienda');
-    const html=injectOrdering(await r.text());
+    const [pageResult,settingsResult]=await Promise.allSettled([
+      fetch(SOURCE,{cache:'no-store'}),
+      fetch(SETTINGS_URL+'?ts='+Date.now(),{cache:'no-store'})
+    ]);
+    if(pageResult.status!=='fulfilled'||!pageResult.value.ok) throw new Error('No se pudo cargar la tienda');
+    let html=await pageResult.value.text();
+    html=injectOrdering(html);
+    if(settingsResult.status==='fulfilled'&&settingsResult.value.ok){
+      try{const settings=await settingsResult.value.json();html=injectDollarRate(html,settings.dollarRate);}catch(e){console.warn('No se pudo leer la cotización administrada',e)}
+    }
     document.open();
     document.write(html);
     document.close();
