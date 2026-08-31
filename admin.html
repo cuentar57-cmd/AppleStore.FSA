@@ -4,119 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · Apple Store FSA</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080808;--card:#18181a;--text:#f5f5f7;--muted:#9b9ba0;--border:rgba(255,255,255,.1);--input:#101010;--red:#ff3b30;--shadow:0 26px 80px rgba(0,0,0,.45)}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}button,input{font-family:inherit}.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.12),transparent 48%),var(--bg);padding:18px}.login-box{width:min(420px,100%);background:var(--card);border:1px solid var(--border);border-radius:30px;padding:34px;box-shadow:var(--shadow)}.apple{width:48px;height:48px;margin:0 auto 14px;display:block;fill:var(--text)}.brand{text-align:center;font-size:2rem;font-weight:900;letter-spacing:-.07em}.sub{text-align:center;color:var(--muted);font-size:.84rem;margin:8px 0 26px}.field{margin-bottom:14px}.label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}.input{width:100%;border:1px solid var(--border);background:var(--input);color:var(--text);border-radius:14px;padding:12px 14px;outline:none}.input:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.08)}.error{display:none;background:rgba(255,59,48,.12);border:1px solid rgba(255,59,48,.25);color:var(--red);padding:10px;border-radius:14px;margin-bottom:14px;font-size:.84rem}.error.show{display:block}.btn{width:100%;border:none;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer;background:var(--text);color:var(--bg)}
+:root{--bg:#080808;--card:#18181a;--text:#f5f5f7;--muted:#9b9ba0;--border:rgba(255,255,255,.1);--input:#101010;--red:#ff3b30;--green:#34c759;--shadow:0 26px 80px rgba(0,0,0,.45)}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}button,input{font-family:inherit}.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.12),transparent 48%),var(--bg);padding:18px;z-index:10}.login-box,.panel{width:min(520px,calc(100% - 32px));background:var(--card);border:1px solid var(--border);border-radius:30px;padding:34px;box-shadow:var(--shadow)}.apple{width:48px;height:48px;margin:0 auto 14px;display:block;fill:var(--text)}.brand{text-align:center;font-size:2rem;font-weight:900;letter-spacing:-.07em}.sub{text-align:center;color:var(--muted);font-size:.84rem;margin:8px 0 26px}.field{margin-bottom:14px}.label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}.input{width:100%;border:1px solid var(--border);background:var(--input);color:var(--text);border-radius:14px;padding:12px 14px;outline:none}.input:focus{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.08)}.error{display:none;background:rgba(255,59,48,.12);border:1px solid rgba(255,59,48,.25);color:var(--red);padding:10px;border-radius:14px;margin-bottom:14px;font-size:.84rem}.error.show{display:block}.btn{width:100%;border:none;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer;background:var(--text);color:var(--bg)}.hidden{display:none!important}.shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}.rate-box{margin:22px 0;background:#101012;border:1px solid var(--border);border-radius:20px;padding:18px}.rate{font-size:2.2rem;font-weight:900;letter-spacing:-.05em;margin:8px 0}.hint{color:var(--muted);font-size:.82rem;line-height:1.5}.status{margin-top:14px;font-size:.82rem;color:var(--muted)}.status.ok{color:var(--green)}.status.err{color:var(--red)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.secondary{background:#2a2a2d;color:var(--text);border:1px solid var(--border)}@media(max-width:520px){.actions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="login">
-  <div class="login-box">
-    <svg class="apple" viewBox="0 0 24 24"><path d="M16.365 1.43c0 1.14-.42 2.16-1.26 3.06-.9.96-1.98 1.51-3.15 1.42-.15-1.11.44-2.29 1.23-3.05.87-.85 2.29-1.47 3.18-1.43zM20.7 17.18c-.55 1.28-.82 1.85-1.53 2.98-.99 1.5-2.38 3.38-4.11 3.4-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.02-4.07 1-1.73-.02-3.05-1.71-4.04-3.21-2.77-4.22-3.06-9.17-1.35-11.8 1.22-1.87 3.14-2.97 4.94-2.97 1.83 0 2.98 1.01 4.5 1.01 1.47 0 2.37-1.01 4.49-1.01 1.6 0 3.3.87 4.51 2.37-3.96 2.17-3.32 7.82.69 9.22z"/></svg>
-    <div class="brand">Apple Store FSA</div>
-    <div class="sub">Panel de administración</div>
-    <div class="error" id="loginError">Usuario o contraseña incorrectos</div>
-    <div class="field"><div class="label">Usuario</div><input id="loginUser" class="input" autocomplete="username" placeholder="Usuario"></div>
-    <div class="field"><div class="label">Contraseña</div><input id="loginPass" class="input" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
-    <button class="btn" id="loginBtn">Ingresar</button>
-  </div>
-</div>
+<div class="login" id="loginScreen"><div class="login-box"><svg class="apple" viewBox="0 0 24 24"><path d="M16.365 1.43c0 1.14-.42 2.16-1.26 3.06-.9.96-1.98 1.51-3.15 1.42-.15-1.11.44-2.29 1.23-3.05.87-.85 2.29-1.47 3.18-1.43zM20.7 17.18c-.55 1.28-.82 1.85-1.53 2.98-.99 1.5-2.38 3.38-4.11 3.4-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.02-4.07 1-1.73-.02-3.05-1.71-4.04-3.21-2.77-4.22-3.06-9.17-1.35-11.8 1.22-1.87 3.14-2.97 4.94-2.97 1.83 0 2.98 1.01 4.5 1.01 1.47 0 2.37-1.01 4.49-1.01 1.6 0 3.3.87 4.51 2.37-3.96 2.17-3.32 7.82.69 9.22z"/></svg><div class="brand">Apple Store FSA</div><div class="sub">Panel de administración</div><div class="error" id="loginError">Usuario o contraseña incorrectos</div><div class="field"><div class="label">Usuario</div><input id="loginUser" class="input" autocomplete="username" placeholder="Usuario"></div><div class="field"><div class="label">Contraseña</div><input id="loginPass" class="input" type="password" autocomplete="current-password" placeholder="Contraseña"></div><button class="btn" id="loginBtn">Ingresar</button></div></div>
+<div class="shell hidden" id="adminShell"><div class="panel"><div class="brand" style="text-align:left;font-size:1.7rem">Configuración de tienda</div><div class="sub" style="text-align:left;margin-bottom:16px">La cotización se aplica a los precios USD mostrados en pesos.</div><div class="rate-box"><div class="label">Precio del dólar USD → ARS</div><div class="rate" id="ratePreview">$ 1.570</div><input id="dollarRate" class="input" type="number" min="1" step="1" placeholder="Ej: 1570"><div class="hint" style="margin-top:10px">Ingresá el valor que querés usar en toda la tienda. No se toma automáticamente de ninguna cotización externa.</div></div><div class="actions"><button class="btn" id="saveDollarBtn">Guardar dólar</button><button class="btn secondary" id="openFullAdminBtn">Abrir panel de productos</button></div><div class="status" id="status">Cargando cotización actual…</div></div></div>
 <script>
-const SOURCE='https://raw.githubusercontent.com/cuentar57-cmd/AppleStore.FSA/a1480cbc7a1c8f7b965eb8b7e61d171459eb2f03/admin.html';
+const FULL_ADMIN_SOURCE='https://raw.githubusercontent.com/cuentar57-cmd/AppleStore.FSA/a1480cbc7a1c8f7b965eb8b7e61d171459eb2f03/admin.html';
+const SETTINGS_URL='store-settings.json';
 const USER_HASH='b6c3b22607c2d2b73c9a7a8a3ff56f8e23011e83310c55beb8716b1e49794707';
 const PASS_HASH='e8599473b5b06e53859b2cb35d816000f1527aab682d81e084e9eabcd3fc5960';
-
-const DRIVE_FILES={
-  'iPhone 11':[
-    ['Negro','1MejsDgSAgkEF43yv2KqMJzIT1gUVwCfu'],['Blanco','1hlLUx-AEORT_EMh3URmcmRTK8zzC_ASw'],['Verde','1Osd2heXnj14wqr2xWHA17xnIk0u3Ie1V'],['Amarillo','1kWjhYAhaLZr0Teuilzttw6bDoltH2RKK'],['Morado','1gvx1nXiuXHcbX4KIn08VjW6Y552X74o3'],['Rojo','1Ph7qc6kUdkC20QKs9iIe-fSUO1HpzQ8w']
-  ],
-  'iPhone 11 Pro Max':[
-    ['Verde noche','1P7EcFlEnZABiehwJ-1IsP3Dz3lkx6ie4'],['Oro','1x4ixsGrnC9adMiDO5K5dbch3x-rO3p2B'],['Gris espacial','1-d7T8UkIBHQeYwe4wh5a1PxxyiLdGl0W'],['Plata','1rDPAdOgfcnla9E0wGzFnoqraOxuZV070']
-  ],
-  'iPhone 12':[
-    ['Negro','1FH_YGHAZ-uQDPdXhzylfKXx5XjGZ8S-7'],['Blanco','1cYWcp9MhxKVaVY050-D_okM9ppfbbvpe'],['Azul','1nB4pJw5O7LFHXnEolhuzF-zyvLzkVRTc'],['Verde','1iJ8oaa8CKwaD_Oq3iNH9TaFEsxrdJv4d'],['Morado','1E55Vc0vsrMtGzu_rUwOF7MmEEuQ4CiGx'],['Rojo','1ldWUOB3-ep3dM8GnglaQXt3N1ugJvfCl']
-  ],
-  'iPhone 12 Pro Max':[
-    ['Grafito','1gZzDI50369F9yxHi-BoJieIrhxcoX6b8'],['Plata','1I3WOa1pHk8VYqHH9Rur7z71CDQ_E6GNU'],['Oro','1D7qsMGv7xU9Gz83MDYw0Hj27rxRrzBb0'],['Azul pacífico','1HtN80SQzndry1HACkqsoZuHnRVpDXtJn']
-  ],
-  'iPhone 13':[
-    ['Medianoche','1GqieiC9DwfZo3NC4nqlbMVoJIDnRIRS9'],['Blanco','1IgP1NjK0Y8Z2-Y975ASjpnGQaRBKFe6f'],['Azul','1353U9MbFfW5F3klwEQDzc6u0cUaCV_xA'],['Rosa','1im10-fS-HWKj0tv70MxTtWQI-GuLc4kD'],['Verde','16CiErbhxlXYhNwRrpymUTBKMJV964_jP'],['Rojo','1bm95iSal4ifurI1GaU8Z-PptsDpfhRAQ']
-  ],
-  'iPhone 13 Pro Max':[
-    ['Grafito','1hauEFz9uoGUZyEOOsFyc7YCjo8yhhz6V'],['Plata','1ZsAX3LDcg2kYfRxoEzCOySwuDFuP8wEo'],['Oro','1OPZnvcoW4Nq6RL_m1MMjzKbq7PTnJTcM'],['Azul sierra','18zBx9WyH4VJJ9OZSNynXTUs5Dddjr-V-'],['Verde alpino','1euIn0vCYOZ7ebpRcj5XANEtRWudOkYRL']
-  ],
-  'iPhone 14':[
-    ['Medianoche','1eUiv-KrLosZtWH1yWyKF5OTegQ6vSVtH'],['Blanco','1AucVO6rJJBqTnJ0TekCsYxcRPxF05rkc'],['Azul','1D6ZNJ_az31uPhIPkwqW7PM2RO4Upl-2I'],['Morado','1pe5pKtEdNJL741miDCPgJJycIUgBPhFi'],['Amarillo','1hy2m3VLB-5sGm7O5_ODXCyvfYhy3uian'],['Rojo','1rL0oey2e1kvwXW6NM3C7U1A9WoLbDk39']
-  ],
-  'iPhone 14 Plus':[
-    ['Medianoche','1eUiv-KrLosZtWH1yWyKF5OTegQ6vSVtH'],['Blanco','1AucVO6rJJBqTnJ0TekCsYxcRPxF05rkc'],['Azul','1D6ZNJ_az31uPhIPkwqW7PM2RO4Upl-2I'],['Morado','1pe5pKtEdNJL741miDCPgJJycIUgBPhFi'],['Amarillo','1hy2m3VLB-5sGm7O5_ODXCyvfYhy3uian'],['Rojo','1rL0oey2e1kvwXW6NM3C7U1A9WoLbDk39']
-  ],
-  'iPhone 14 Pro Max':[
-    ['Negro espacial','1cOh350R7aWrRwlm66QpsLyNpv8-gkgiI'],['Plata','1aQxHM0qUzL1nOnKnQtssbj5vgo30lllK'],['Oro','1qWZnP0ysJXiZd9D_p8kvakYn1aOp5yWC'],['Morado oscuro','1zuvO99Rmq_e38n-xEQVO5UvgU38FLpuF']
-  ],
-  'iPhone 15':[
-    ['Negro','1McjEmGnXNccXfCkjBCwEjL5DORVI-zqw'],['Azul','1ZRUxp6WKOI51C3vWIDer3_ogmfUQLlvD'],['Verde','1t9BBbDRZ7WjixM0J_yne5vFGibgnDEQn'],['Amarillo','13xVupNC1nFKuQ4PVJuhhUkenLb-DJH-I'],['Rosa','1J7PNEXVTQYdbIchR0OHf_G6nKlfwNKC5']
-  ],
-  'iPhone 15 Pro Max':[
-    ['Titanio Negro','1sBVDzDRWLHOA8mFlIJKD-81v6bPC0RlA'],['Titanio Blanco','1iNlZvJfF0Wk2gZla3NSiHwigNsbXsUJf'],['Titanio Azul','1lNX12Ijqw6SZARjCjirL4fW4V_TAYHty'],['Titanio Natural','1XWUF9nMRbe60Y0xa3irY14TIVvWIkz8l']
-  ],
-  'iPhone 16':[
-    ['Negro','1MAhA551JigYIFdSq2ghkUjdq7vLlP-9-'],['Blanco','1y0bY2Jr8ffMfP7iWxe54CvIQqjgrAEjb'],['Rosa','14FrbyPjtFvEY2ApY-Q5RV7xiRrnvUREP'],['Verde azulado','1Bh6Fdr26q4W8bbf7X2wlDYBpZGdHFZp-'],['Ultramarino','1wke2r2uweEQ6ctzKHwFtcnixj_nP6TpZ']
-  ],
-  'iPhone 16 Pro Max':[
-    ['Titanio Negro','1RshGiDH0PuFlYW7cezgkjbHh2cxDVLq8'],['Titanio Blanco','1j6sbCjDsSV03qdwWDYeYfQq5MLcEdJAC'],['Titanio Natural','1H_vNsNbBc-uYsDnWYMgv1xWPwwg6SbqD'],['Titanio Desierto','1HUC9bXCVHNvtspAzUyAQyUsKY-ZKFxt5']
-  ],
-  'iPhone 17':[
-    ['Negro','13e9zMXdSyG4Unk-KCmFvzQdd087XKaCn'],['Blanco','13PrTCq9bz_PFAhbxXtlpflKJ8PvvwapD'],['Azul','1QcsFeCpjmbMV08drAIcL0fEl2R5emxF9'],['Verde','1e9X9xdtBBtr_wMTF2EXlq--urak2RqWz'],['Lavanda','11dinsAvScGaHTBZkIyjGe-JvF_K_0eBF']
-  ],
-  'iPhone 17 Air':[
-    ['Negro','1zXVPEQ13PnERXF2j3go4jyOxnP2VrU9c'],['Blanco','1qZSlV6pQt86h79kPi61-nJ_qinLqbLcu'],['Azul','1IgrVv64HE5n18WNTf6hpsnTp2NQ_iR0P'],['Dorado','1spLiW_l0ai8TvWDxPpX_KdUXs82QL_V-']
-  ],
-  'iPhone 17e':[
-    ['Blanco','1zBwl1ldG4Ierb602wdABA3yfSdJHVmSY'],['Negro','1t5Bgm9sRWr5dWLk5130Y1_f2e3h_aRDG'],['Rosa','1gJGoeJGFwqyNiui_I1cJn71Fa0Rv2tP4']
-  ],
-  'iPhone 17 Pro Max':[
-    ['Silver','1e-Mhgykozx3rIM-KjXG1UJMzyrwGNylZ'],['Azul','1VSVRJwYR4CQWkQ5bEMR8IH94A-9WCjeD'],['Orange','1zQa32dEYwLC7Qh5BdwnV-tPaXqsMF3dh']
-  ]
-};
-
-function driveImage(id){return 'https://lh3.googleusercontent.com/d/'+encodeURIComponent(id)+'=w1200'}
-function buildDriveCatalog(){
-  const images={};
-  const colors={};
-  Object.entries(DRIVE_FILES).forEach(([model,items])=>{
-    images[model]=items.map(([,id])=>driveImage(id));
-    colors[model]=items.map(([name])=>name);
-  });
-  return {images,colors};
-}
-function patchPanel(html){
-  const {images,colors}=buildDriveCatalog();
-  const imgCode='const MODEL_IMAGES = '+JSON.stringify(images,null,2)+';';
-  const colorCode='const MODEL_COLORS = '+JSON.stringify(colors,null,2)+';';
-  html=html.replace(/const MODEL_IMAGES = \{[\s\S]*?\n\};/,imgCode);
-  html=html.replace(/const MODEL_COLORS = \{[\s\S]*?\n\};/,colorCode);
-  html=html.replace('Colores PNG del modelo','');
-  html=html.replace('Este modelo no tiene imágenes automáticas cargadas.','');
-  html=html.replace('Elegí un color y el panel carga la imagen PNG del modelo. También podés subir una propia a Cloudinary.','');
-  return html;
-}
-async function sha256(value){const data=new TextEncoder().encode(value);const hash=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function enter(){
-  loginError.classList.remove('show');
-  const [u,p]=await Promise.all([sha256(loginUser.value.trim()),sha256(loginPass.value)]);
-  if(u!==USER_HASH||p!==PASS_HASH){loginPass.value='';loginError.classList.add('show');return}
-  sessionStorage.setItem('asf_admin_session','1');
-  try{
-    const r=await fetch(SOURCE,{cache:'no-store'});
-    if(!r.ok)throw new Error('No se pudo cargar el panel');
-    const html=patchPanel(await r.text());
-    document.open();document.write(html);document.close();
-  }catch(e){loginError.textContent='No se pudo cargar el panel. Volvé a intentar.';loginError.classList.add('show')}
-}
-loginBtn.addEventListener('click',enter);
-loginPass.addEventListener('keydown',e=>{if(e.key==='Enter')enter()});
+const SESSION='asf_admin_dollar_session';
+function fmt(n){return '$ '+Number(n||0).toLocaleString('es-AR')}
+async function hash(v){const b=new TextEncoder().encode(v);const d=await crypto.subtle.digest('SHA-256',b);return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function login(){loginError.classList.remove('show');if(await hash(loginUser.value.trim())===USER_HASH&&await hash(loginPass.value)===PASS_HASH){sessionStorage.setItem(SESSION,'1');showAdmin()}else loginError.classList.add('show')}
+function showAdmin(){loginScreen.classList.add('hidden');adminShell.classList.remove('hidden');loadRate()}
+async function loadRate(){try{const r=await fetch(SETTINGS_URL+'?ts='+Date.now(),{cache:'no-store'});const d=await r.json();dollarRate.value=Number(d.dollarRate)||1570;ratePreview.textContent=fmt(dollarRate.value);status.textContent='Cotización actual cargada';status.className='status ok'}catch(e){dollarRate.value=1570;ratePreview.textContent=fmt(1570);status.textContent='No se pudo leer la configuración; se muestra 1570 como respaldo.';status.className='status err'}}
+function downloadSettings(){const rate=Math.round(Number(dollarRate.value));if(!rate||rate<=0){status.textContent='Ingresá una cotización válida.';status.className='status err';return}const data={dollarRate:rate,updatedAt:new Date().toISOString(),updatedBy:'admin'};const blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='store-settings.json';a.click();URL.revokeObjectURL(a.href);status.textContent='Se generó store-settings.json. Reemplazalo en GitHub para publicar el nuevo dólar.';status.className='status ok'}
+dollarRate.addEventListener('input',()=>ratePreview.textContent=fmt(dollarRate.value));loginBtn.addEventListener('click',login);loginPass.addEventListener('keydown',e=>{if(e.key==='Enter')login()});saveDollarBtn.addEventListener('click',downloadSettings);openFullAdminBtn.addEventListener('click',()=>location.href=FULL_ADMIN_SOURCE);if(sessionStorage.getItem(SESSION)==='1')showAdmin();
 </script>
 </body>
 </html>
