@@ -1,0 +1,48 @@
+name: Render APPLE STORE FSA Reel
+on:
+  push:
+    branches: [codex/apple-store-fsa-motion]
+    paths: ['motion-studio/**', '.github/workflows/APPLE_STORE_FSA_reel.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: motion-studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Generar música y efectos originales
+        run: npm run audio
+      - name: Preparar navegador para Remotion
+        run: npx remotion browser ensure
+      - name: Render MP4
+        run: npm run render
+      - name: Verificar duración, resolución y FPS
+        run: |
+          python3 - <<'PY'
+          import json,subprocess
+          p='out/APPLE_STORE_FSA_Reel.mp4'
+          data=json.loads(subprocess.check_output(['ffprobe','-v','quiet','-show_entries','stream=width,height,avg_frame_rate:format=duration','-of','json',p]))
+          video=next(s for s in data['streams'] if s.get('width'))
+          assert video['width']==1080 and video['height']==1920,video
+          assert video['avg_frame_rate']=='30/1',video
+          assert abs(float(data['format']['duration'])-25)<.25,data['format']
+          print('VALIDADO',video,data['format']['duration'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: APPLE_STORE_FSA_Reel_MP4
+          path: motion-studio/out/APPLE_STORE_FSA_Reel.mp4
+          retention-days: 14
