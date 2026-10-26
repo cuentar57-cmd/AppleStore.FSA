@@ -29,6 +29,8 @@ jobs:
         run: npx remotion browser ensure
       - name: Render MP4
         run: npm run render
+      - name: Instalar ffprobe para verificación
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Verificar duración, resolución y FPS
         run: |
           python3 - <<'PY'
