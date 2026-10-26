@@ -1,0 +1,23 @@
+{
+  "name": "apple-store-fsa-motion-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "audio": "python3 scripts/make_audio.py",
+    "dev": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts AppleStoreFsaReel out/APPLE_STORE_FSA_Reel.mp4 --codec h264 --crf 18 --pixel-format yuv420p --concurrency 2",
+    "still": "remotion still src/index.ts AppleStoreFsaReel out/portada.png --frame 32",
+    "compositions": "remotion compositions src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "remotion": "4.0.538",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.9.2"
+  }
+}
