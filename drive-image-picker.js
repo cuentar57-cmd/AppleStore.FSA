@@ -55,10 +55,17 @@
   }
   function folderFor(model) {
     const n = norm(model);
+    const exact = folders.find(f => norm(f.name) === n && Array.isArray(f.images) && f.images.length > 0);
+    if (exact) return exact;
+    // Solo si faltan fotos del Pro: usar imágenes del Pro Max de la misma generación.
+    if (/^iphone\d+pro$/.test(n)) {
+      const fallback = folders.find(f => norm(f.name) === n + 'max' && Array.isArray(f.images) && f.images.length > 0);
+      if (fallback) return fallback;
+    }
     if (n === 'iphone14plus') return folders.find(f => norm(f.name) === 'iphone14yplus');
     if (n === 'iphone15plus') return folders.find(f => norm(f.name) === 'iphone15');
     if (n === 'iphone16plus') return folders.find(f => norm(f.name) === 'iphone16');
-    return folders.find(f => norm(f.name) === n);
+    return null;
   }
   function modelKeys(f) {
     if (norm(f.name) === 'iphone14yplus') return ['iPhone 14', 'iPhone 14 Plus'];
@@ -143,7 +150,9 @@
     const query = norm(searchInput.value);
     const candidates = all.filter(item => item.folderId === folder.id &&
       (!query || norm(item.name).includes(query)));
-    if (!keepStatus) status.textContent = model + ' · ' + candidates.length + ' fotografías disponibles.';
+    const fallback = norm(folder.name) !== norm(model) && /^iphone\d+pro$/.test(norm(model));
+    if (!keepStatus) status.textContent = model + ' · ' + candidates.length + ' fotografías disponibles' +
+      (fallback ? ' (fotos de ' + folder.name.trim() + ' porque no hay imágenes del Pro).' : '.');
     if (!candidates.length) {
       const empty = document.createElement('p');
       empty.className = 'hint';
@@ -174,7 +183,7 @@
       label.textContent = (filenameColor(item.name) || {}).name || item.name;
       const detail = document.createElement('div');
       detail.className = 'drive-card-detail';
-      detail.textContent = model;
+      detail.textContent = fallback ? folder.name.trim() + ' (alternativa)' : model;
       card.append(img,label,detail);
       frag.appendChild(card);
     });
@@ -214,6 +223,13 @@
           if (!MODEL_CATALOG[model]) MODEL_CATALOG[model] = {cat:'iphone',colors:[]};
           MODEL_CATALOG[model].colors = colors;
         });
+      });
+      // Mantener imágenes por color coherentes al guardar un Pro sin carpeta propia.
+      Object.keys(MODEL_CATALOG).filter(model => /^iphone\d+pro$/.test(norm(model))).forEach(model => {
+        const folder = folderFor(model);
+        if (!folder || norm(folder.name) === norm(model)) return;
+        const maxKey = modelKeys(folder)[0];
+        if (MODEL_CATALOG[maxKey]?.colors?.length) MODEL_CATALOG[model].colors = MODEL_CATALOG[maxKey].colors;
       });
       ready = true;
       if (typeof fillModels === 'function') {
