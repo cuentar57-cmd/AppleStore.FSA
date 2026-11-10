@@ -37,21 +37,18 @@
   const controls = document.createElement('div');
   controls.className = 'drive-filters';
   controls.innerHTML =
-    '<select class="select" id="driveFolderFilter" aria-label="Elegir carpeta de imágenes"><option value="">Todos los modelos</option></select>' +
-    '<input class="input" id="driveLibrarySearch" type="search" placeholder="Buscar foto o color..." aria-label="Buscar imagen">';
+    '<input class="input" id="driveLibrarySearch" type="search" placeholder="Buscar color dentro del modelo..." aria-label="Buscar imagen del modelo">';
   const status = document.createElement('div');
   status.className = 'drive-gallery-status';
   status.setAttribute('role', 'status');
   status.textContent = 'Cargando fotografías de Google Drive…';
   section.insertBefore(controls, gallery);
   section.insertBefore(status, gallery);
-  const folderSelect = controls.querySelector('#driveFolderFilter');
   const searchInput = controls.querySelector('#driveLibrarySearch');
   let folders = [];
   let all = [];
   let ready = false;
   let error = '';
-  let userChangedFilter = false;
 
   function norm(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -117,21 +114,40 @@
     renderGallery(true);
     status.textContent = 'Seleccionada: ' + item.name + '. Presioná «Guardar producto» para aplicar el cambio.';
   }
+  // El modelo del producto decide qué carpeta se muestra. Nunca se mezclan modelos.
+  function selectedModel() {
+    if (modelField.value.trim()) return modelField.value.trim();
+    const name = (document.getElementById('fName')?.value || '').trim();
+    const target = norm(name);
+    // Elegir el nombre más específico: "14 Pro Max" antes de "14 Pro".
+    const keys = Object.keys(MODEL_CATALOG).filter(k => norm(k).startsWith('iphone'));
+    keys.sort((a,b) => norm(b).length - norm(a).length);
+    return keys.find(k => target.startsWith(norm(k))) || '';
+  }
   function renderGallery(keepStatus) {
     gallery.replaceChildren();
     if (!ready) {
       status.textContent = error ? 'Error al cargar las fotos: ' + error : 'Cargando fotografías de Google Drive…';
       return;
     }
-    const folderId = folderSelect.value;
+    const model = selectedModel();
+    if (!model) {
+      status.textContent = 'Seleccioná un modelo de iPhone para ver solamente sus fotografías.';
+      return;
+    }
+    const folder = folderFor(model);
+    if (!folder) {
+      status.textContent = 'No hay fotos de ' + model + ' en la carpeta de Drive. No se mostrarán imágenes de otros modelos.';
+      return;
+    }
     const query = norm(searchInput.value);
-    const candidates = all.filter(item => (!folderId || item.folderId === folderId) &&
-      (!query || norm(item.name + ' ' + item.folder).includes(query)));
-    if (!keepStatus) status.textContent = candidates.length + ' fotografías disponibles · ' + folders.length + ' carpetas de Drive.';
+    const candidates = all.filter(item => item.folderId === folder.id &&
+      (!query || norm(item.name).includes(query)));
+    if (!keepStatus) status.textContent = model + ' · ' + candidates.length + ' fotografías disponibles.';
     if (!candidates.length) {
       const empty = document.createElement('p');
       empty.className = 'hint';
-      empty.textContent = 'No hay fotografías para esta búsqueda. Seleccioná «Todos los modelos» para ver la biblioteca completa.';
+      empty.textContent = 'No hay fotos de ' + model + ' que coincidan con la búsqueda.';
       gallery.appendChild(empty);
       return;
     }
@@ -141,7 +157,7 @@
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'drive-card' + (item.id === chosen ? ' is-selected' : '');
-      card.setAttribute('aria-label', 'Seleccionar ' + item.name + ' de ' + item.folder);
+      card.setAttribute('aria-label', 'Seleccionar ' + item.name + ' de ' + model);
       card.addEventListener('click', () => pick(item));
       const img = document.createElement('img');
       img.src = item.thumbnail;
@@ -150,7 +166,7 @@
       img.addEventListener('error', () => {
         const fallback = document.createElement('span');
         fallback.className = 'drive-card-fallback';
-        fallback.textContent = 'Ver foto';
+        fallback.textContent = 'Sin vista previa';
         img.replaceWith(fallback);
       }, {once:true});
       const label = document.createElement('div');
@@ -158,40 +174,26 @@
       label.textContent = (filenameColor(item.name) || {}).name || item.name;
       const detail = document.createElement('div');
       detail.className = 'drive-card-detail';
-      detail.textContent = item.folder;
-      card.append(img, label, detail);
+      detail.textContent = model;
+      card.append(img,label,detail);
       frag.appendChild(card);
     });
     gallery.appendChild(frag);
   }
-  function showModel(model) {
-    if (!ready) { renderGallery(); return; }
-    if (!userChangedFilter) {
-      const match = folderFor(model);
-      folderSelect.value = match ? match.id : '';
-      searchInput.value = '';
-    }
+  function showModel() {
+    searchInput.value = '';
     renderGallery();
   }
-  folderSelect.addEventListener('change', () => {
-    userChangedFilter = true;
-    renderGallery();
-  });
   searchInput.addEventListener('input', () => renderGallery());
-  modelField.addEventListener('change', () => {
-    userChangedFilter = false;
-    showModel(modelField.value);
-  });
+  modelField.addEventListener('change', showModel);
+  document.getElementById('fName')?.addEventListener('input', showModel);
   new MutationObserver(() => {
-    if (modal.classList.contains('open')) {
-      userChangedFilter = false;
-      showModel(modelField.value);
-    }
+    if (modal.classList.contains('open')) showModel();
   }).observe(modal, {attributes:true,attributeFilter:['class']});
 
   /* Sustituimos el render antiguo: ya no deben verse gráficos generados.
      Además, las imágenes por color al guardar serán las URL reales de Drive. */
-  window.renderColorGallery = function(model) { showModel(model); };
+  window.renderColorGallery = function() { showModel(); };
   renderGallery();
 
   fetch('./drive-iphone-images.json', {cache:'no-store'})
@@ -199,12 +201,7 @@
     .then(library => {
       folders = Array.isArray(library.folders) ? library.folders : [];
       all = [];
-      folderSelect.innerHTML = '<option value="">Todos los modelos</option>';
       folders.forEach(folder => {
-        const option = document.createElement('option');
-        option.value = folder.id;
-        option.textContent = folder.name;
-        folderSelect.appendChild(option);
         const colors = [];
         (folder.images || []).forEach((item,i) => {
           const detected = filenameColor(item.name);
@@ -224,8 +221,7 @@
         fillModels();
         modelField.value = existingModel;
       }
-      userChangedFilter = false;
-      showModel(modelField.value);
+      showModel();
     })
     .catch(err => {
       error = err.message || 'No se pudo leer el catálogo';
