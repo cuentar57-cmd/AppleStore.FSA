@@ -49,6 +49,11 @@
   let all = [];
   let ready = false;
   let error = '';
+  // El catálogo original del panel termina en la serie 16.
+  // Asegurar que la serie 17 esté en el selector incluso antes de cargar Drive.
+  for (const name of ['iPhone 17', 'iPhone 17 Pro', 'iPhone 17 Pro Max', 'iPhone 17 Air', 'iPhone 17e', 'iPhone 18 Pro Max']) {
+    if (!MODEL_CATALOG[name]) MODEL_CATALOG[name] = { cat:'iphone', colors:[] };
+  }
 
   function norm(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -123,13 +128,19 @@
   }
   // El modelo del producto decide qué carpeta se muestra. Nunca se mezclan modelos.
   function selectedModel() {
-    if (modelField.value.trim()) return modelField.value.trim();
-    const name = (document.getElementById('fName')?.value || '').trim();
-    const target = norm(name);
-    // Elegir el nombre más específico: "14 Pro Max" antes de "14 Pro".
-    const keys = Object.keys(MODEL_CATALOG).filter(k => norm(k).startsWith('iphone'));
-    keys.sort((a,b) => norm(b).length - norm(a).length);
-    return keys.find(k => target.startsWith(norm(k))) || '';
+    // Los productos existentes pueden guardar "iPhone 17 Pro Max 256GB"
+    // en vez del modelo exacto del desplegable. Detectar el modelo sin
+    // confundir "17 Pro" con "17 Pro Max".
+    const keys = Object.keys(MODEL_CATALOG).filter(k => norm(k).startsWith('iphone'))
+      .sort((a,b) => norm(b).length - norm(a).length);
+    const values = [modelField.value, document.getElementById('fName')?.value || ''];
+    for (const value of values) {
+      const v = norm(value);
+      if (!v) continue;
+      const match = keys.find(k => v.startsWith(norm(k)));
+      if (match) return match;
+    }
+    return '';
   }
   function renderGallery(keepStatus) {
     gallery.replaceChildren();
@@ -224,6 +235,8 @@
           MODEL_CATALOG[model].colors = colors;
         });
       });
+      // Asegurar el modelo 17 Pro, aunque Drive solo tenga carpeta 17 Pro Max.
+      // Y compartir sus opciones de color en la persistencia del producto.
       // Mantener imágenes por color coherentes al guardar un Pro sin carpeta propia.
       Object.keys(MODEL_CATALOG).filter(model => /^iphone\d+pro$/.test(norm(model))).forEach(model => {
         const folder = folderFor(model);
