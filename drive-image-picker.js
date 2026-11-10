@@ -208,7 +208,13 @@
   modelField.addEventListener('change', showModel);
   document.getElementById('fName')?.addEventListener('input', showModel);
   new MutationObserver(() => {
-    if (modal.classList.contains('open')) showModel();
+    if (modal.classList.contains('open')) {
+      // El panel original deja el selector vacío si el nombre guardado
+      // incluye capacidad o si el modelo no existía antes en la lista.
+      const inferred = selectedModel();
+      if (!modelField.value && inferred) modelField.value = inferred;
+      showModel();
+    }
   }).observe(modal, {attributes:true,attributeFilter:['class']});
 
   /* Sustituimos el render antiguo: ya no deben verse gráficos generados.
