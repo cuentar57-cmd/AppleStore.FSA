@@ -1,7 +1,74 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Panel · Apple Store FSA</title><style>html,body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif}#loading{min-height:100vh;display:flex;align-items:center;justify-content:center}</style></head><body><div id="loading">Cargando panel…</div><script>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Panel · Apple Store FSA</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080808;color:#f5f5f7;font-family:'DM Sans',sans-serif}
+.hidden{display:none!important}.login{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:#080808}
+.login-box{width:min(430px,100%);background:#18181a;border:1px solid rgba(255,255,255,.1);border-radius:26px;padding:28px;box-shadow:0 26px 80px rgba(0,0,0,.45)}
+.brand{font-size:1.8rem;font-weight:900;letter-spacing:-.05em;text-align:center}.sub{text-align:center;color:#9b9ba0;font-size:.84rem;margin:8px 0 24px}
+.field{margin:12px 0}.label{display:block;font-size:.72rem;font-weight:900;color:#9b9ba0;text-transform:uppercase;margin-bottom:7px}
+.input{width:100%;background:#101010;border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:14px;padding:14px;font:inherit;outline:none}
+.input:focus{border-color:#fff}.btn{width:100%;border:0;border-radius:14px;padding:14px;font:inherit;font-weight:900;cursor:pointer;background:#f5f5f7;color:#080808;margin-top:10px}
+.btn:disabled{opacity:.65;cursor:wait}.error{display:none;color:#ff3b30;font-size:.85rem;margin:0 0 12px}.error.show{display:block}
+#loading{min-height:100vh;align-items:center;justify-content:center;color:#9b9ba0}
+</style></head><body><div class="login" id="loginScreen"><div class="login-box">
+<div class="brand">Apple Store FSA</div><div class="sub">Panel de administración</div>
+<div class="error" id="loginError">Usuario o contraseña incorrectos</div>
+<div class="field"><label class="label" for="loginUser">Usuario</label><input id="loginUser" class="input" autocomplete="username" placeholder="Usuario"></div>
+<div class="field"><label class="label" for="loginPass">Contraseña</label><input id="loginPass" class="input" type="password" autocomplete="current-password" placeholder="Contraseña"></div>
+<button class="btn" id="loginBtn" type="button">Ingresar</button>
+</div></div><div id="loading" class="hidden">Cargando panel…</div><script>
 const SOURCE='https://raw.githubusercontent.com/cuentar57-cmd/AppleStore.FSA/a1480cbc7a1c8f7b965eb8b7e61d171459eb2f03/admin.html';
+const USER_HASH='b6c3b22607c2d2b73c9a7a8a3ff56f8e23011e83310c55beb8716b1e49794707';
+const PASS_HASH='e8599473b5b06e53859b2cb35d816000f1527aab682d81e084e9eabcd3fc5960';
+const AUTH_SESSION='asf_admin_session';
 const EXTRA=`<style>@media(max-width:900px){body{overflow-x:hidden}.app{display:block!important}.side{width:min(82vw,310px)!important;left:calc(-1 * min(82vw,310px))!important;box-shadow:18px 0 55px rgba(0,0,0,.55);z-index:100!important}.side.open{left:0!important}.main{width:100%!important;min-width:0!important}.topbar{padding:0 12px!important;gap:8px}.content{padding:14px 12px!important}.stats{grid-template-columns:1fr 1fr!important}.toolbar{align-items:stretch!important}.toolbar-left{width:100%!important}.toolbar .input,.toolbar .select{width:100%!important;min-width:0!important}.table-wrap{width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}.menuBtn{display:inline-flex!important;min-width:44px!important;min-height:44px!important}.side-close{display:flex!important}.modal{max-height:88vh!important}.modal-body{padding:16px!important}.modal-foot{padding:12px 16px!important}.grid{grid-template-columns:1fr!important}}.side-close{display:none;position:absolute;right:12px;top:12px;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--text);align-items:center;justify-content:center;font-size:24px;z-index:3}.dollar-sheet{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;display:none;align-items:flex-end;justify-content:center;padding:16px}.dollar-sheet.open{display:flex}.dollar-card{width:min(460px,100%);background:var(--card);border:1px solid var(--border);border-radius:24px;padding:22px}.dollar-card h2{margin:0 0 18px}.dollar-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.dollar-status{min-height:22px;margin-top:10px;font-size:.8rem;color:var(--muted)}</style><div class="dollar-sheet" id="dollarSheet"><div class="dollar-card"><h2>Cotización del dólar</h2><div class="field"><div class="label">USD → ARS</div><input class="input" id="mobileDollar" type="number" min="1" step="1" inputmode="numeric"></div><div class="dollar-actions"><button class="btn btn-ghost" id="closeDollar">Cancelar</button><button class="btn btn-primary" id="saveMobileDollar">Guardar</button></div><div class="dollar-status" id="dollarStatus"></div></div></div><script>(function(){const API='https://script.google.com/macros/s/AKfycbwfIrEDy_7_Sh9jS3jygkezRfefpZ69R_GJeQpans-4GFt_0jVaW_mMgW4q5rnY9Ej0dQ/exec';function n(v){return Number(v)||0}function usd(p){return n(p.priceUsd||p.precioUsd||p.USD||p.usd)}function ars(p){return n(p.priceArs||p.precioArs||p.ARS||p.ars)}const side=document.getElementById('side');if(side&&!side.querySelector('.side-close')){const x=document.createElement('button');x.className='side-close';x.type='button';x.textContent='×';x.onclick=()=>side.classList.remove('open');side.appendChild(x)}document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',()=>{if(innerWidth<=900&&side)side.classList.remove('open')}));const cfg=[...document.querySelectorAll('.nav-item')].find(el=>el.textContent.toLowerCase().includes('configur'));if(cfg)cfg.addEventListener('click',async e=>{e.preventDefault();dollarSheet.classList.add('open');dollarStatus.textContent='Cargando…';try{const r=await fetch(API+'?action=getProducts&ts='+Date.now(),{cache:'no-store'}),d=await r.json(),ps=Array.isArray(d)?d:(d.products||[]);let rate=1570;for(const p of ps){if(usd(p)>0&&ars(p)>0){rate=Math.round(ars(p)/usd(p));break}}mobileDollar.value=rate;dollarStatus.textContent=''}catch(_){mobileDollar.value=1570;dollarStatus.textContent='No se pudo leer.'}});closeDollar.onclick=()=>dollarSheet.classList.remove('open');saveMobileDollar.onclick=async()=>{const rate=Math.round(n(mobileDollar.value));if(rate<1)return;saveMobileDollar.disabled=true;dollarStatus.textContent='Guardando…';try{const r=await fetch(API+'?action=getProducts&ts='+Date.now(),{cache:'no-store'}),d=await r.json();let ps=Array.isArray(d)?d:(d.products||[]);ps=ps.map(p=>usd(p)>0?{...p,priceArs:Math.round(usd(p)*rate)}:p);await fetch(API+'?action=saveProducts',{method:'POST',body:JSON.stringify({products:ps})});dollarStatus.textContent='Guardado.';setTimeout(()=>dollarSheet.classList.remove('open'),600)}catch(_){dollarStatus.textContent='No se pudo guardar.'}finally{saveMobileDollar.disabled=false}}})();<\/script>`;
 function addTechnology(html){html=html.replace('<option value="accesorios">Accesorios</option>','<option value="accesorios">Accesorios</option><option value="tecnologia">Más Tecnología</option>');html=html.replace('<option value="accesorios">Accesorios</option></select></div>','<option value="accesorios">Accesorios</option><option value="tecnologia">Más Tecnología</option></select></div>');html=html.replace("accesorios:'Accesorios'}[c]||c","accesorios:'Accesorios',tecnologia:'Más Tecnología'}[c]||c");return html}
-fetch(SOURCE,{cache:'no-store'}).then(r=>r.text()).then(html=>{html=addTechnology(html);html=html.replace('</body>',EXTRA+'<scr'+'ipt src="drive-image-picker.js?v=20261110-6"></scr'+'ipt></body>');document.open();document.write(html);document.close()}).catch(()=>loading.textContent='No se pudo cargar el panel.');
+async function sha256(value){const data=new TextEncoder().encode(value);const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function loadFullPanel(){
+  const loginScreen=document.getElementById('loginScreen');
+  const loginError=document.getElementById('loginError');
+  const loading=document.getElementById('loading');
+  loginScreen.classList.add('hidden');
+  loading.classList.remove('hidden');
+  loading.style.display='flex';
+  try{
+    const response=await fetch(SOURCE,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    let html=await response.text();
+    html=addTechnology(html);
+    html=html.replace('<div class="sub">Por defecto: admin / asf2026</div>','');
+    html=html.replace('</body>',EXTRA+'<scr'+'ipt src="drive-image-picker.js?v=20261110-6"></scr'+'ipt></body>');
+    sessionStorage.setItem(AUTH_SESSION,'1');
+    document.open();document.write(html);document.close();
+  }catch(error){
+    loading.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+    loginError.textContent='No se pudo cargar el panel. Volvé a intentar.';
+    loginError.classList.add('show');
+  }
+}
+async function enterPanel(){
+  const loginError=document.getElementById('loginError');
+  const loginButton=document.getElementById('loginBtn');
+  loginError.classList.remove('show');
+  loginButton.disabled=true;loginButton.textContent='Verificando…';
+  try{
+    const userHash=await sha256(document.getElementById('loginUser').value.trim());
+    const passHash=await sha256(document.getElementById('loginPass').value);
+    if(userHash!==USER_HASH||passHash!==PASS_HASH){
+      document.getElementById('loginPass').value='';
+      loginError.textContent='Usuario o contraseña incorrectos';
+      loginError.classList.add('show');
+      return;
+    }
+    await loadFullPanel();
+  }catch(error){
+    loginError.textContent='No se pudo verificar el acceso. Volvé a intentar.';
+    loginError.classList.add('show');
+  }finally{
+    loginButton.disabled=false;loginButton.textContent='Ingresar';
+  }
+}
+document.getElementById('loginBtn').addEventListener('click',enterPanel);
+document.getElementById('loginPass').addEventListener('keydown',event=>{if(event.key==='Enter')enterPanel()});
+if(sessionStorage.getItem(AUTH_SESSION)==='1')loadFullPanel();
 </script></body></html>
